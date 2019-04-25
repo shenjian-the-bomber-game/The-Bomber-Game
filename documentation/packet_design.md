@@ -1,3 +1,5 @@
+
+
 # Simple Chat Room Package Design  
 
 ## Frame type (all)
@@ -47,15 +49,13 @@
 
 |  0   |  1, 2  |      3       |
 | :--: | :----: | :----------: |
-| 0x01 | 0x0001 | respond type |
+| 0x01 | 0x0001 | ResponseType |
 
- > **respond type:**
+ > **ResponseType:**
  >
- >|         0x0         |   0x1   |
- >| :-----------------: | :-----: |
- >| user does not exist | succeed |
- >
- >
+ > > >|         0x0         | 0x1  |     0x4     |
+ > > >| :-----------------: | :--: | :---------: |
+ > > >| user does not exist |  OK  | ErrorOccurs |
 
 #### passwd `0x02`
 
@@ -65,15 +65,15 @@
 
 #### passwd_response `0x03`
 
-|  0   |  1, 2  |          3          |
-| :--: | :----: | :-----------------: |
-| 0x03 | 0x0001 | passwd_respond type |
+|  0   |  1, 2  |      3       |
+| :--: | :----: | :----------: |
+| 0x03 | 0x0001 | ResponseType |
 
-> **passwd_respond type:**
+> **ResponseType:**
 
-> |   0x1   |      0x2      |  0x3  |
-> | :-----: | :-----------: | :---: |
-> | correct | change passwd | wrong |
+> | 0x1  |  0x3  |     0x4     |
+> | :--: | :---: | :---------: |
+> |  OK  | wrong | ErrorOccurs |
 > 密码错误client直接踢掉
 
 #### new_passwd `0x02`
@@ -84,11 +84,21 @@
 
 #### refuse  `0x04`
 
-|  0   |  1, 2  |  3   |
-| :--: | :----: | :--: |
-| 0x04 | 0x0000 |  0   |
+|  0   |  1, 2  |      3       |
+| :--: | :----: | :----------: |
+| 0x04 | 0x0000 | responseType |
 
-------------------------
+>**ResponseType:**
+>
+>|   **0x4**   |     **0x5**     |
+>| :---------: | :-------------: |
+>| ErrorOccurs | AlreadyLoggedIn |
+
+
+
+
+
+-----------
 
 ## Synchronization
 
@@ -101,23 +111,17 @@
 |       history       |    0x07    |
 | synchronization_end |    0x08    |
 
-#### configure  `0x05`
+#### OnlineList  `0x05`
 
-|  0   |  1, 2  |          3, 4           |   5, 6, 7   |  8, 9, 10   |
-| :--: | :----: | :---------------------: | :---------: | :---------: |
-| 0x05 | 0x0008 | record_length (2 bytes) | color (RGB) | color (RGB) |
+|  0   |  1, 2  |            3, 4             |
+| :--: | :----: | :-------------------------: |
+| 0x05 | 0x0002 | onlinelist_length (2 bytes) |
 
 #### history_user_name  `0x06`
 
-|  0   |            1, 2            |   3    |         4 ... 31         |
-| :--: | :------------------------: | :----: | :----------------------: |
-| 0x06 | user_name length (2 bytes) | direct | user_name (host to user) |
-
-direct: 
-
-​	0 	 me -> others
-
-​	1 	others -> me
+|  0   |            1, 2            |         4 ... 31         |
+| :--: | :------------------------: | :----------------------: |
+| 0x06 | user_name length (2 bytes) | user_name (host to user) |
 
 #### history  `0x07`
 
