@@ -76,17 +76,11 @@
 > |  OK  | wrong | ErrorOccurs |
 > 密码错误client直接踢掉
 
-#### new_passwd `0x02`
-
-|  0   |          1 , 2          |        3 ... 31         |
-| :--: | :---------------------: | :---------------------: |
-| 0x02 | passwd_length (2 bytes) | password (28 bytes max) |
-
 #### refuse  `0x04`
 
 |  0   |  1, 2  |      3       |
 | :--: | :----: | :----------: |
-| 0x04 | 0x0000 | responseType |
+| 0x04 | 0x0001 | responseType |
 
 >**ResponseType:**
 >
@@ -111,19 +105,13 @@
 |       history       |    0x07    |
 | synchronization_end |    0x08    |
 
-#### OnlineList  `0x05`
-
-|  0   |  1, 2  |            3, 4             |
-| :--: | :----: | :-------------------------: |
-| 0x05 | 0x0002 | onlinelist_length (2 bytes) |
-
-#### userName  `0x06`
+#### OnlineList -> UserName  `0x06`
 
 |  0   |            1, 2            |         4 ... 31         |
 | :--: | :------------------------: | :----------------------: |
 | 0x06 | user_name length (2 bytes) | user_name (host to user) |
 
-#### synchronization _end   `0x08`
+#### SyncEnd   `0x08`
 
 1 byte
 
@@ -131,74 +119,36 @@
 | :--: | :----: | :--: |
 | 0x08 | 0x0000 |  0   |
 
+
+
+
+
 ------------------------
 
 ## Game
 
-### Message meta
 
-|  message meta type  | descriptor |
-| :-----------------: | :--------: |
-|      text_user      |    0x09    |
-|      fil_name       |    0x0B    |
-| group_text_userlist |    0x0F    |
+**SendInvit** **0x09**
 
-### Sending message
-
-#### text_user `0x09`
-
-32 bytes
-
-|  0   |           1 , 2            |         3 ... 31         |
+|  0   |            1,2             |         4... 31          |
 | :--: | :------------------------: | :----------------------: |
-| 0x09 | user_name_length (2 bytes) | user_name (28 bytes max) |
+| 0x09 | user_name length (2 bytes) | user_name (host to user) |
 
-#### text `0x0A`
 
-max : 1024 bytes
+**RecvInvit** **0x0A**
 
-|  0   |          1 , 2           |  3 ... (message_length + 3)   |
-| :--: | :----------------------: | :---------------------------: |
-| 0x0A | message_length (2 bytes) | message_data (1021 bytes max) |
-
-### Sending file
-
-#### file_username `0x0F`
-
-|  0   |           1 , 2            |         3 ... 31         |
+|  0   |            1,2             |         4... 31          |
 | :--: | :------------------------: | :----------------------: |
-| 0x0F | file_username_length (2 bytes) | file_username (28 bytes max) |
+| 0x0A | user_name length (2 bytes) | user_name (host to user) |
 
-#### file_name `0x0B`
 
-|  0   |           1 , 2            |         3 ... 31         |
-| :--: | :------------------------: | :----------------------: |
-| 0x0B | file_name_length (2 bytes) | file_name (28 bytes max) |
+**InvitResponse** **0x0A**
 
-#### file_in_progress `0x0C`
+|  0   | 1,2  |      3       |
+| :--: | :--: | :----------: |
+| 0x0A |  1   | ResponseType |
 
-max : 1024 bytes
+  
 
-|  0   |                            1 , 2                             |   3 ... (file_length+3)    |
-| :--: | :----------------------------------------------------------: | :------------------------: |
-| 0x0C | file_length (2 bytes) (0 if remaining file_length > 1021 else file_length) | file_data (1021 bytes max) |
+  刚刚
 
-### Sending group message
-
-#### group_text_userlist `0x0D`
-
-1024 bytes
-
-|  0   |              1, 2              |  3 ... 1024   |
-| :--: | :----------------------------: | :-----------: |
-| 0x0D | username_list_length (2 bytes) | username_list |
-
-> username_list 包含最后一个username的 `'\0'`
-
-#### message `0x0A`
-
-max : 1024 bytes
-
-|  0   |          1 , 2           |  3 ... (message_length + 3)   |
-| :--: | :----------------------: | :---------------------------: |
-| 0x0A | message_length (2 bytes) | message_data (1021 bytes max) |

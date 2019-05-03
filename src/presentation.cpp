@@ -34,37 +34,36 @@ vector<uint8_t> PresentationLayer::pack_Response(Message_To_Pre message){
     temp.push_back(*descriptor);
 
     switch(message.type_){
-        // case PacketType::InfoResponse:             
-        //     //length = 1
-        //     //length = htons((uint16_t)1 );    
-        //     length = (uint16_t)1;
+        case PacketType::InfoResponse:         
+            length = (uint16_t)1;
+            temp.push_back((uint8_t)(length >> 8) );
+            temp.push_back((uint8_t)(length) );
 
-        //     temp.push_back((uint8_t)(length >> 8) );
-        //     temp.push_back((uint8_t)(length) );
-        //     temp.push_back(*((uint8_t*)&message.respond_));
-        //     break;
+            temp.push_back(*((uint8_t*)&message.respond_));
+            break;
 
-        // case PacketType::PasswordResponse:
-        //     //length = 1
-        //     //length = htons((uint16_t)1 );    
-        //     length = (uint16_t)1;
+        case PacketType::PasswordResponse:
+            //length = 1
+            //length = htons((uint16_t)1 );    
+            length = (uint16_t)1;
+            temp.push_back((uint8_t)(length >> 8) );
+            temp.push_back((uint8_t)(length) );
 
-        //     temp.push_back((uint8_t)(length >> 8) );
-        //     temp.push_back((uint8_t)(length) );
-        //     temp.push_back(*((uint8_t*)&message.respond_));
-        //     break;
+            temp.push_back(*((uint8_t*)&message.respond_));
+            break;
 
-        // case PacketType::SyncEnd:
-        //     //length = 0
-        //     temp.push_back((uint8_t)0); 
-        //     temp.push_back((uint8_t)0);
+        case PacketType::SyncEnd:
+            //length = 0
+            temp.push_back((uint8_t)0); 
+            temp.push_back((uint8_t)0);
 
-        // case PacketType::Refuse:
-        //     //length = 1
-        //     length = (uint16_t)1;
-        //     temp.push_back((uint8_t)(length >> 8) ); 
-        //     temp.push_back((uint8_t)length );
-        //     temp.push_back(*((uint8_t*)&message.respond_));
+        case PacketType::Refuse:
+            //length = 1
+            length = (uint16_t)1;
+            temp.push_back((uint8_t)(length >> 8) ); 
+            temp.push_back((uint8_t)length );
+
+            temp.push_back(*((uint8_t*)&message.respond_));
     }
 
     return temp;
@@ -154,71 +153,32 @@ vector<uint8_t> PresentationLayer::pack_Text(Client * client){
     // return temp;
 }
 
-vector<uint8_t> PresentationLayer::pack_HistoryUserName(Message_To_Pre * message, string host_name){
-    // uint8_t direct;
-    // vector<uint8_t> temp;
-    // uint16_t length;
-    // string str;
+vector<uint8_t> PresentationLayer::pack_UserName(Message_To_Pre * message, string host_name){
+    vector<uint8_t> temp;
+    uint16_t length;
+    string str;
 
-    // //push back: descriptor
-    // temp.push_back((uint8_t)PacketType::HistoryUserName);
+    // descriptor
+    temp.push_back((uint8_t)PacketType::UserName);
 
-    // //direct
-    // str = *message->history_.begin();
-    // if(str == host_name)
-    //     direct = 0; //me to others
-    // else
-    //     direct = 1; //others to me
+    //push_back user name length
+    str = *message->onlineuser_.begin(); 
+    length = (uint16_t)(str.length() + 1);
+    temp.push_back((uint8_t)(length >> 8) );
+    temp.push_back((uint8_t)(length) );
 
-    // //me to others
-    // if(direct == 0){    
-    //     //erase host name
-    //     message->history_.erase(message->history_.begin());     
-        
-    //     //push_back: user_name length
-    //     str = *message->history_.begin(); 
-    //     length = (uint16_t)(str.length() + 1);
-    //     temp.push_back((uint8_t)(length >> 8) );
-    //     temp.push_back((uint8_t)(length) );
+    //push_back user name
+    const char* c;
+    c = str.c_str();
+    while((*c) != '\0'){
+        temp.push_back((uint8_t)(*c) );
+        c++;
+    }
 
-    //     //push_back: direct
-    //     temp.push_back(direct);
-
-    //     //push_back: user_name
-    //     const char* c;
-    //     c = str.c_str();
-    //     while((*c) != '\0'){
-    //         temp.push_back((uint8_t)(*c) );
-    //         c++;
-    //     }
-
-    //     message->history_.erase(message->history_.begin());     
-    // }
-    // //others to me
-    // else{    
-    //     //push_back: user_name length
-    //     str = *message->history_.begin(); 
-    //     length = (uint16_t)(str.length() + 1);
-    //     temp.push_back((uint8_t)(length >> 8) );
-    //     temp.push_back((uint8_t)(length) );
-
-    //     //push_back: direct
-    //     temp.push_back(direct);
-
-    //     //push_back: user_name
-    //     const char* c;
-    //     c = str.c_str();
-    //     while((*c) != '\0'){
-    //         temp.push_back((uint8_t)(*c) );
-    //         c++;
-    //     }
-
-    //     //erase host name
-    //     message->history_.erase(message->history_.begin());     
-    //     message->history_.erase(message->history_.begin());     
-    // }
-
-    // return temp;
+    //erase host name
+    message->onlineuser_.erase(message->onlineuser_.begin());     
+    
+    return temp;
 }
 
 // vector<uint8_t> PresentationLayer::pack_History(Message_To_Pre * message){
@@ -263,40 +223,45 @@ StatusCode PresentationLayer::pack_Message(Client *client){
 
     message = client->message_atop;
 
-    //start packing:
-    //WaitForPasswd or WaitForNewPasswd: send info/passwd response
-    // if((client->state == SessionState::WaitForPasswd) 
-    //         || (client->state == SessionState::WaitForNewPasswd) 
-    //         || (client->state == SessionState::Error)) {
-    //     temp_str = pack_Response(message);
-    //     client->send_buffer.push(temp_str);
-    // }
+    // special handling for multi-login
+    if(message_atop.type_ == PacketType::Refuse){
+        //TODO: refuse and disconnect
+    }
 
-    // //ServerWaiting: 
-    // if((client->state == SessionState::ServerWaiting) ){
-        
-    //     //slog in succeed, now synchronize 
-    //     if(message.type_ == PacketType::Configuration){
-    //         //sync config
-    //         temp_str = pack_Config(message);
-    //         client->send_buffer.push(temp_str);
+    //cases based on status
 
-    //         //sync history
-    //         while(message.history_.size() != 0){
-    //             //history user name
-    //             temp_str = pack_HistoryUserName(&message, client->host_username_);
-    //             client->send_buffer.push(temp_str);
-    //             //history
-    //             temp_str = pack_History(&message);
-    //             client->send_buffer.push(temp_str);
-    //         }
-    //         cout << "client send_buffer length " << client->send_buffer.size() << endl;
+    //WaitForPasswd, Error:
+    if((client->state == SessionState::WaitForPasswd) 
+            || (client->state == SessionState::Error)) {
+        temp_str = pack_Response(message);
+        client->send_buffer.push(temp_str);
+    }
 
-    //         //Sync End
-    //         message_temp.type_ = PacketType::SyncEnd;
-    //         client->send_buffer.push(pack_Response(message_temp));
-    //     }//end of Configuration
+    //ServerWaiting: 
+    if((client->state == SessionState::ServerWaiting) ){
+        //synchronize 
+        if(message.type_ == PacketType::OnlineList){
+            //sync online user list 
+            while(message.onlineuser_.size() != 0){
+                //online user names
+                temp_str = pack_UserName(&message, client->host_username_);
+                client->send_buffer.push(temp_str);
+                //history
+                // temp_str = pack_History(&message);
+                // client->send_buffer.push(temp_str);
+            }
+            cout << "client send_buffer length " << client->send_buffer.size() << endl;
 
+            //Sync End
+            message_temp.type_ = PacketType::SyncEnd;
+            client->send_buffer.push(pack_Response(message_temp));
+        }
+
+        // RecvInvit
+        if(message.type_ == PacketType::RecvInvit){
+
+        }
+    }
     //     //send Text to some other client
     //     if(message.type_ == PacketType::Text){
     //         //use message_ptoa to find the receiver client
@@ -372,26 +337,23 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
         packet_size = packet.data.size() + 3;
 
         // //start unpacking 
-        // if((packet.type == PacketType::Info) || (packet.type == PacketType::Password)
-        //     || (packet.type == PacketType::HistoryUserName) || (packet.type == PacketType::History)
-        //     || (packet.type == PacketType::TextUsername) || (packet.type == PacketType::Text)
-        //     || (packet.type == PacketType::FileUsername) || (packet.type == PacketType::FileName)
-        //     || (packet.type == PacketType::FileInProgress) || (packet.type == PacketType::FileEnd) )
-        // {
-        //     temp_data = unpack_String(packet);
-        //     switch(packet.type){
-        //         case PacketType::Info:
-        //             client->message_ptoa.user_name_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::Password:
-        //             client->message_ptoa.password_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::HistoryUserName:
-        //             client->message_ptoa.user_name_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::History:
-        //             client->message_ptoa.media_text_ = (char *)temp_data;
-        //             break;
+        if((packet.type == PacketType::Info) || (packet.type == PacketType::Password)
+            || (packet.type == PacketType::HistoryUserName) || (packet.type == PacketType::History)
+            || (packet.type == PacketType::TextUsername) || (packet.type == PacketType::Text)
+            || (packet.type == PacketType::FileUsername) || (packet.type == PacketType::FileName)
+            || (packet.type == PacketType::FileInProgress) || (packet.type == PacketType::FileEnd) )
+        {
+            temp_data = unpack_String(packet);
+            switch(packet.type){
+                case PacketType::Info:
+                    client->message_ptoa.user_name_ = (char *)temp_data;
+                    break;
+                case PacketType::Password:
+                    client->message_ptoa.password_ = (char *)temp_data;
+                    break;
+                case PacketType::SendInvit:
+                    client->message_ptoa.user_name_b_ = (char *)temp_data;
+                    
         //         case PacketType::TextUsername:
         //             client->message_ptoa.user_name_ = (char *)temp_data;
         //             break;
@@ -444,7 +406,7 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
         // // cout << client->message_ptoa.user_name_ << endl;
         // // cout << &client << endl;
         // // cout << "debug2" << endl;
-        // AppLayerInstance.MessageToApp(client);
+        AppLayerInstance.MessageToApp(client);
     }
     return StatusCode::OK;
 }
