@@ -51,9 +51,9 @@ enum class PacketType : uint8_t {
     PasswordResponse = 0x03,
     Refuse = 0x04,
     OnlineList = 0x05,
-    HistoryUserName = 0x06,
-    History = 0x07,
-    SyncEnd = 0x08,
+    UserName = 0x06,
+    // History = 0x07,`
+    // SyncEnd = 0x08,
     TextUsername = 0x09,
     Text = 0x0A,
     FileName = 0x0B,
