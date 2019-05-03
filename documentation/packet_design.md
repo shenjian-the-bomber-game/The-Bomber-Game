@@ -117,17 +117,11 @@
 | :--: | :----: | :-------------------------: |
 | 0x05 | 0x0002 | onlinelist_length (2 bytes) |
 
-#### history_user_name  `0x06`
+#### userName  `0x06`
 
 |  0   |            1, 2            |         4 ... 31         |
 | :--: | :------------------------: | :----------------------: |
 | 0x06 | user_name length (2 bytes) | user_name (host to user) |
-
-#### history  `0x07`
-
-|  0   |     1, 2      | 3 ... record_length+3 |
-| :--: | :-----------: | :-------------------: |
-| 0x07 | record_length |        record         |
 
 #### synchronization _end   `0x08`
 
@@ -139,7 +133,7 @@
 
 ------------------------
 
-## Communication
+## Game
 
 ### Message meta
 
