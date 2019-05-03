@@ -17,7 +17,9 @@ private:
     std::vector<uint8_t> pack_TextUserName(Client * client);    
     std::vector<uint8_t> pack_Text(Client * client);  
 
-    std::vector<uint8_t> pack_HistoryUserName(Message_To_Pre * message, std::string host_name);
+
+    std::vector<uint8_t> pack_Invit(Message_To_Pre message);
+    std::vector<uint8_t> pack_UserName(Message_To_Pre * message, std::string host_name);
     // std::vector<uint8_t> pack_History(Message_To_Pre * message);
 
    // vector<uint8_t> pack_String(Message_To_Pre message);

@@ -34,36 +34,22 @@ vector<uint8_t> PresentationLayer::pack_Response(Message_To_Pre message){
     temp.push_back(*descriptor);
 
     switch(message.type_){
-        case PacketType::InfoResponse:         
-            length = (uint16_t)1;
-            temp.push_back((uint8_t)(length >> 8) );
-            temp.push_back((uint8_t)(length) );
-
-            temp.push_back(*((uint8_t*)&message.respond_));
-            break;
-
-        case PacketType::PasswordResponse:
-            //length = 1
-            //length = htons((uint16_t)1 );    
-            length = (uint16_t)1;
-            temp.push_back((uint8_t)(length >> 8) );
-            temp.push_back((uint8_t)(length) );
-
-            temp.push_back(*((uint8_t*)&message.respond_));
-            break;
-
         case PacketType::SyncEnd:
             //length = 0
             temp.push_back((uint8_t)0); 
             temp.push_back((uint8_t)0);
+            break;
 
+        case PacketType::InfoResponse:
+        case PacketType::PasswordResponse:
         case PacketType::Refuse:
+        case PacketType::InvitResponse:
             //length = 1
             length = (uint16_t)1;
             temp.push_back((uint8_t)(length >> 8) ); 
             temp.push_back((uint8_t)length );
-
-            temp.push_back(*((uint8_t*)&message.respond_));
+            temp.push_back(*((uint8_t*)&message.respond_));  
+            break;          
     }
 
     return temp;
@@ -151,6 +137,30 @@ vector<uint8_t> PresentationLayer::pack_Text(Client * client){
     // }
 
     // return temp;
+}
+
+vector<uint8_t> PresentationLayer::pack_Invit(Message_To_Pre message){
+    vector<uint8_t> temp;
+    uint16_t length;
+    string str;
+
+    // descriptor
+    temp.push_back((uint8_t)PacketType::InvitResponse);
+
+    //push_back user name length
+    length = (uint16_t)(message.user_name_a_.length() );
+    temp.push_back((uint8_t)(length >> 8) );
+    temp.push_back((uint8_t)(length) );
+
+    //push_back user name
+    const char* c;
+    c = message.user_name_a_.c_str();
+    while((*c) != '\0'){
+        temp.push_back((uint8_t)(*c) );
+        c++;
+    }
+
+    return temp;
 }
 
 vector<uint8_t> PresentationLayer::pack_UserName(Message_To_Pre * message, string host_name){
@@ -259,7 +269,14 @@ StatusCode PresentationLayer::pack_Message(Client *client){
 
         // RecvInvit
         if(message.type_ == PacketType::RecvInvit){
+            temp_str = pack_Invit(message);
+            client->send_buffer.push(temp_str);
+        }
 
+        //InvitResponse
+        if(message.type_ == PacketType::InvitResponse){
+            temp_str = pack_Response(message);
+            client->send_buffer.push(temp_str);
         }
     }
     //     //send Text to some other client
@@ -353,7 +370,7 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
                     break;
                 case PacketType::SendInvit:
                     client->message_ptoa.user_name_b_ = (char *)temp_data;
-                    
+
         //         case PacketType::TextUsername:
         //             client->message_ptoa.user_name_ = (char *)temp_data;
         //             break;
