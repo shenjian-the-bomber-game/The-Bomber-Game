@@ -53,14 +53,14 @@ enum class PacketType : uint8_t {
     OnlineList = 0x05,
     UserName = 0x06,
     // History = 0x07,`
-    // SyncEnd = 0x08,
-    TextUsername = 0x09,
-    Text = 0x0A,
-    FileName = 0x0B,
-    FileInProgress = 0x0C,
-    GroupTextUserlist = 0x0D,
-    FileEnd = 0x0E,
-    FileUsername = 0x0F,
+    SyncEnd = 0x08,
+    SendInvit = 0x09,
+    RecvInvit = 0x0A,
+    InvitResponse = 0x0B,
+    // FileInProgress = 0x0C,
+    // GroupTextUserlist = 0x0D,
+    // FileEnd = 0x0E,
+    // FileUsername = 0x0F,
 };
 
 struct DataPacketHeader {
@@ -102,6 +102,7 @@ enum class ResponseType : uint8_t {
     WrongPassword = 3,
     ErrorOccurs = 4,
     AlreadyLoggedIn = 5,
+    Busy = 6,
 };
 
 // State machine definition
@@ -110,9 +111,10 @@ enum class SessionState : unsigned int {
     Acceptance,         // On acceptance, create a new client instance
     Error,
     WaitForPasswd,
-	WaitForNewPasswd,
+	// WaitForNewPasswd,
     ServerWaiting,      
-	WaitForText,
+	// WaitForText,
+    WaitInvitRespon,
 };
 
 // Used as a buffer in transfer layer, instantiated in Clients
@@ -146,18 +148,20 @@ struct Message_To_App{
     PacketType type_;
     std::string user_name_;
     std::string password_; 
-    std::string media_text_;
-    std::vector<std::string> user_name_list_;
-    std::string file_name_;
-    std::string media_file_;
-    unsigned short config_; // 2 bytes in TransLayer
+    std::string user_name_b_;
+    // std::string media_text_;
+    // std::vector<std::string> user_name_list_;
+    // std::string file_name_;
+    // std::string media_file_;
+    // unsigned short config_; // 2 bytes in TransLayer
 };
 
 struct Message_To_Pre{
     PacketType type_;
     ResponseType respond_; 
-    int config_;
-    std::vector<std::string> history_;
+    // int config_;
+    std::vector<std::string> onlineuser_;
+    std::string user_name_a_;
 };
 
 // not sure if struct group_text should be kept or just use text[] instead ?
