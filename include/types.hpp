@@ -56,8 +56,8 @@ enum class PacketType : uint8_t {
     SyncEnd = 0x08,
     SendInvit = 0x09,
     RecvInvit = 0x0A,
-    // InvitResponse = 0x0B,
-    WatiForBoard = 0x0C,
+    InvitResponse = 0x0B,
+    // WatiForBoard = 0x0C,
     // GroupTextUserlist = 0x0D,
     // FileEnd = 0x0E,
     // FileUsername = 0x0F,
@@ -114,7 +114,7 @@ enum class SessionState : unsigned int {
 	// WaitForNewPasswd,
     ServerWaiting,      
 	// WaitForText,
-    WaitInvitRespon,
+    WatiForBoard,
 };
 
 // Used as a buffer in transfer layer, instantiated in Clients
