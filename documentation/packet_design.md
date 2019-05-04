@@ -31,11 +31,11 @@
 
 | message meta type | descriptor |
 | :---------------: | :--------: |
-|       info        |    0x00    |
-|   info_respond    |    0x01    |
-| passwd/new_passwd |    0x02    |
-|  passwd_respond   |    0x03    |
-|      refuse       |    0x04    |
+|                   |            |
+|                   |            |
+|                   |            |
+|                   |            |
+|                   |            |
 
 ------------------------
 
@@ -98,16 +98,16 @@
 
 ### Frame types(Synchronization)
 
-|     frame type      | descriptor |
-| :-----------------: | :--------: |
-|      configure      |    0x05    |
-|  history_user_name  |    0x06    |
-|       history       |    0x07    |
-| synchronization_end |    0x08    |
+| frame type | descriptor |
+| :--------: | :--------: |
+|            |            |
+|            |            |
+|            |            |
+|            |            |
 
 #### OnlineList -> UserName  `0x06`
 
-|  0   |            1, 2            |         4 ... 31         |
+|  0   |            1, 2            |         3 ... 31         |
 | :--: | :------------------------: | :----------------------: |
 | 0x06 | user_name length (2 bytes) | user_name (host to user) |
 
@@ -130,25 +130,34 @@
 
 **SendInvit** **0x09**
 
-|  0   |            1,2             |         4... 31          |
+|  0   |            1,2             |         3... 31          |
 | :--: | :------------------------: | :----------------------: |
 | 0x09 | user_name length (2 bytes) | user_name (host to user) |
 
 
 **RecvInvit** **0x0A**
 
-|  0   |            1,2             |         4... 31          |
+|  0   |            1,2             |         3... 31          |
 | :--: | :------------------------: | :----------------------: |
 | 0x0A | user_name length (2 bytes) | user_name (host to user) |
 
-
-**InvitResponse** **0x0A**
+**InvitResponse** **0x0B**
 
 |  0   | 1,2  |      3       |
 | :--: | :--: | :----------: |
 | 0x0A |  1   | ResponseType |
 
-  
+  >**ResponseType:**
+  >
+  >|      0       |  1   |      2      |  6   |
+  >| :----------: | :--: | :---------: | :--: |
+  >| UserNotExist |  OK  | RefuseInvit | Busy |
 
-  刚刚
+ 
+
+**Board 0x0C**
+
+|  0   | 1,2  |                        3... 14                         |
+| :--: | :--: | :----------------------------------------------------: |
+| 0x0C |  12  | $h1(x,y), t1(x,y), h2(x,y), t2(x,y), h3(x,y), t3(x,y)$ |
 

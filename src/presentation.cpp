@@ -347,64 +347,35 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
     while( client->recv_buffer.has_complete_packet()){
         //client->recv_buffer.has_complete_packet()
         DataPacket packet;
-        Message_To_App message;
+        Message_To_App *message = client->message_ptoa;
         unsigned char *temp_data;
 
+        //packet from TransLayer
         packet = client->recv_buffer.dequeue_packet();
         packet_size = packet.data.size() + 3;
 
-        // //start unpacking 
-        if((packet.type == PacketType::Info) || (packet.type == PacketType::Password)
-            || (packet.type == PacketType::HistoryUserName) || (packet.type == PacketType::History)
-            || (packet.type == PacketType::TextUsername) || (packet.type == PacketType::Text)
-            || (packet.type == PacketType::FileUsername) || (packet.type == PacketType::FileName)
-            || (packet.type == PacketType::FileInProgress) || (packet.type == PacketType::FileEnd) )
-        {
+        //string unpacking 
+        if((packet.type == PacketType::Info) 
+            || (packet.type == PacketType::Password)
+            || (packet.type == PacketType::SendInvit) ){
             temp_data = unpack_String(packet);
             switch(packet.type){
                 case PacketType::Info:
-                    client->message_ptoa.user_name_ = (char *)temp_data;
+                    message->user_name_ = (char *)temp_data;
                     break;
                 case PacketType::Password:
-                    client->message_ptoa.password_ = (char *)temp_data;
+                    message->password_ = (char *)temp_data;
                     break;
                 case PacketType::SendInvit:
-                    client->message_ptoa.user_name_b_ = (char *)temp_data;
-
-        //         case PacketType::TextUsername:
-        //             client->message_ptoa.user_name_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::Text:
-        //             client->message_ptoa.media_text_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::FileUsername:
-        //             client->message_ptoa.user_name_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::FileName:
-        //             client->message_ptoa.file_name_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::FileInProgress:
-        //             client->message_ptoa.media_file_ = (char *)temp_data;
-        //             break;
-        //         case PacketType::FileEnd:                
-        //             client->message_ptoa.media_file_ = (char *)temp_data;
-        //             break;
-        //         default:
-        //             break;
-        //     }
-        // }//end of if
-     
-        // if(packet.type == PacketType::Password){
-        //     temp_data = unpack_String(packet);
-        //     if(check_passwordFormat(temp_data) == false){
-        //         message_atop.type_ = PacketType::PasswordResponse;
-        //         message_atop.respond_ = ResponseType::WrongPassword;
-        //         client->send_buffer.push(pack_Response(message_atop));
-        //         return StatusCode::OK;
-        //     }
-        //     //valid password format
-        //     client->message_ptoa.password_ = (char *)temp_data;
-        // }
+                    message->user_name_b_ = (char *)temp_data;
+                    break;
+            }
+        }//end of if
+        
+        //response unpacking
+        if((packet.type == PacketType::InvitResponse) ){
+            message->respond_ = unpack_Response(packet);
+        }
 
         // if(packet.type == PacketType::Configuration){
         //         message = unpack_Configuration(packet);
@@ -420,7 +391,7 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
         // // cout << (packet.type == PacketType::Password) << endl;
         // // cout << (client->message_ptoa.type_ == PacketType::Password) << endl;
     
-        // // cout << client->message_ptoa.user_name_ << endl;
+        // // cout << messageuser_name_ << endl;
         // // cout << &client << endl;
         // // cout << "debug2" << endl;
         AppLayerInstance.MessageToApp(client);
@@ -439,6 +410,15 @@ unsigned char * PresentationLayer::unpack_String(DataPacket packet){
     temp[data_len] = '\0';
     
     return temp;
+}
+
+ResponseType PresentationLayer::unpack_Response(DataPacket packet){
+    Message_To_App * message;
+    vector<uint8_t>::iterator iter;
+
+    iter = packet.data.begin();
+
+    return (ResponseType)(*iter);
 }
 
 // Message_To_App PresentationLayer::unpack_Configuration(DataPacket packet){

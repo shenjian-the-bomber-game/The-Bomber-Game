@@ -28,6 +28,8 @@ private:
 
 
     unsigned char * unpack_String(DataPacket packet);
+    ResponseType unpack_Response(DataPacket packet);
+    
     // Message_To_App  unpack_Configuration(DataPacket packet);
     // Message_To_App  unpack_GroupTextUserList(DataPacket packet);
 
