@@ -186,7 +186,7 @@ struct GameInfo {
     Client* opponent_;
     int[10][10] win_board_;
     bool is_my_turn_;
-}
+};
 
 struct Client {
 
