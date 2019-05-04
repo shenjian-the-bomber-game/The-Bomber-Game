@@ -56,8 +56,8 @@ enum class PacketType : uint8_t {
     SyncEnd = 0x08,
     SendInvit = 0x09,
     RecvInvit = 0x0A,
-    InvitResponse = 0x0B,
-    // FileInProgress = 0x0C,
+    // InvitResponse = 0x0B,
+    WatiForBoard = 0x0C,
     // GroupTextUserlist = 0x0D,
     // FileEnd = 0x0E,
     // FileUsername = 0x0F,
@@ -98,7 +98,7 @@ enum class StatusCode : int {
 enum class ResponseType : uint8_t {
     UserNotExist = 0,
     OK = 1,
-    ChangePassword = 2,
+    RefuseInvit = 2,
     WrongPassword = 3,
     ErrorOccurs = 4,
     AlreadyLoggedIn = 5,
@@ -146,6 +146,7 @@ private:
 
 struct Message_To_App{
     PacketType type_;
+    ResponseType respond_;
     std::string user_name_;
     std::string password_; 
     std::string user_name_b_;
