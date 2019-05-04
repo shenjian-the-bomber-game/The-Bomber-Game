@@ -57,7 +57,7 @@ enum class PacketType : uint8_t {
     SendInvit = 0x09,
     RecvInvit = 0x0A,
     InvitResponse = 0x0B,
-    // WatiForBoard = 0x0C,
+    Board = 0x0C,
     // GroupTextUserlist = 0x0D,
     // FileEnd = 0x0E,
     // FileUsername = 0x0F,
@@ -115,6 +115,7 @@ enum class SessionState : unsigned int {
     ServerWaiting,      
 	// WaitForText,
     WatiForBoard,
+    InGame,
 };
 
 // Used as a buffer in transfer layer, instantiated in Clients
@@ -181,6 +182,11 @@ struct file{
 // #ifndef CLIENT_H
 // #define CLIENT_H
 
+struct GameInfo {
+    Client* opponent_;
+    int[10][10] win_board_;
+    bool is_my_turn_;
+}
 
 struct Client {
 
@@ -191,14 +197,16 @@ struct Client {
 
     int client_id;
 
-    CircularQueue recv_buffer;
+    CircularQueue recv_bufferususer_name_a_er_name_a_;
     std::queue< std::vector<uint8_t> > send_buffer;
 
     int socket_fd;
     SessionState state = SessionState::Acceptance;
     std::string host_username_;
+    
     Message_To_App message_ptoa;
     Message_To_Pre message_atop;
+    GameInfo game_info_;
 
     // should be always greater than kHeaderSize (reset to this)
     // updated when packet is received and on state change

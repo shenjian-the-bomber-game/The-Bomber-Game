@@ -161,6 +161,10 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                        PreLayerInstance.pack_Message(Client_A); 
                                                        Client_A->state = SessionState::WaitForBoard;
                                                        client_name_->state = SessionState::WaitForBoard;
+                                                       Client_A->game_info_.opponent_ = client_name_;
+                                                       client_name_->game_info_.opponent_ = Client_A;
+                                                       Client_A->game_info_.is_my_turn_ = true;
+                                                       client_name_->game_info_.is_my_turn_ = false;
                                                 }
                                                 else {
                                                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
@@ -184,7 +188,13 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                 }
                 case SessionState::WaitForBoard: {
                         switch(message_->type_) {
-                                
+                               case PacketType::Board: {
+                                       LOG(Info) << "Server 1 receive board from client" << endl;
+                                       LOG(Info) << "Need to Store it in the Server 2" << endl;
+                                       client_name_->state = SessionState::InGame;
+                                       break;
+                               }
+                               break;
                         }
                 }
         }
