@@ -377,6 +377,11 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
             message->respond_ = unpack_Response(packet);
         }
 
+        //board unpacking
+        if((packet.type == PacketType::Board) ){
+            client->game_info_.win_board_ = unpack_Board(packet);
+        }
+
         // if(packet.type == PacketType::Configuration){
         //         message = unpack_Configuration(packet);
         //         client->message_ptoa.config_ = message.config_;
@@ -419,6 +424,86 @@ ResponseType PresentationLayer::unpack_Response(DataPacket packet){
     iter = packet.data.begin();
 
     return (ResponseType)(*iter);
+}
+
+//function:
+//   this will retrun a 5x5 plane in upward
+int [5]* PresentationLayer::plane(int curr){
+    int Plane[5][5];
+    for(int x = 0; x < 5; x++)
+        Plane[x][1] = curr*10;
+    
+    Plane[2][2] = Plane[1][3] = Plane[3][3] = curr*10;
+    Plane[2][0] = curr*10+1;
+    Plane[2][3] = curr*10+2;
+    
+    return Plane;
+}
+
+int [10]* PresentationLayer::unpack_Board(DataPacket packet){
+    int board[10][10] = {{0}};
+    vector<uint8_t>::iterator iter;
+
+    curr = 1;
+    for(iter = packet.data.begin(); iter != packet.data.end(); iter+=4){
+        x1 = (int)(*iter);
+        y1 = (int)(*(iter+1));
+        x2 = (int)(*(iter+3));
+        y2 = (int)(*(iter+4));
+        
+        //head & tail
+        board[x1][y2] = curr*10+1;
+        board[x2][y2] = curr*10+2;
+
+        //body
+        if(x1 == x2){    //vertical
+            if(y1 < y2){    //up
+                //the fuselage
+                for(int y = y1+1; y < y2; y++)
+                    board[x1][y] = curr*10;
+                //the wing
+                for(int x = x1-2; x <= x1+2; x++)
+                    board[x][y1+1] = curr*10;
+                //the tail
+                board[x1-1][y2] = board[x1+1][y2] = curr*10;
+            }
+            else{    //down
+                // the fuselage
+                for(int y = y1-1; y > y2; y--)
+                    board[x1][y] = curr*10;
+                //the wing
+                for(int x = x1-2; x <= x1+2; x++)
+                    board[x][y1-1] = curr*10;
+                //the tail
+                board[x1-1][y2] = board[x1+1][y2] = curr*10;
+            }
+        }
+        else{   //horizental
+            if(x1 < x2){    //left
+                //the fuselage
+                for(int x = x1+1; x < x2; x++)
+                    board[x][y1] = curr*10;
+                //the wing
+                for(int y = y1-2; y <= y1+2; y++)
+                    board[x1+1][y] = curr*10;
+                //the tail
+                board[x2][y1-1] = board[x2][y1+1] = curr*10;
+            }
+            else{    //right
+                //the fuselage
+                for(int x = x1-1; x > x2; x--)
+                    board[x][y1] = curr*10;
+                //the wing
+                for(int y = y1-2; y <= y1+2; y++)
+                    board[x1-1][y] = curr*10;
+                //the tail
+                board[x2][y1-1] = board[x2][y1+1] = curr*10;
+            }
+        }
+        curr += 1;
+    }//end of for
+
+    return board;
 }
 
 // Message_To_App PresentationLayer::unpack_Configuration(DataPacket packet){
