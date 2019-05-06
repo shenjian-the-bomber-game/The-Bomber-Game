@@ -58,8 +58,8 @@ enum class PacketType : uint8_t {
     RecvInvit = 0x0A,
     InvitResponse = 0x0B,
     Board = 0x0C,
-    // GroupTextUserlist = 0x0D,
-    // FileEnd = 0x0E,
+    SingleCoord = 0x0D,
+    DoubleCoord = 0x0E,
     // FileUsername = 0x0F,
 };
 
@@ -184,7 +184,8 @@ struct file{
 
 struct GameInfo {
     Client* opponent_;
-    int[10][10] win_board_;
+    int win_board_[10][10];
+    uint8_t plane_coord_[12];
     bool is_my_turn_;
 };
 

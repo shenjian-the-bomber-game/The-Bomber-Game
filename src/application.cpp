@@ -197,6 +197,15 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                break;
                         }
                 }
+                case SessionState::InGame: {
+                        switch(message_->type_) {
+                                case PacketType::SingleCoord: {
+                                        LOG(Info) << "Server receive a single coordinate!" << endl;
+                                        LOG(Info) << "Server need to give the information to another side of the game & return the value to the client." << endl;
+
+                                }
+                        }
+                }
         }
 
         return ;
