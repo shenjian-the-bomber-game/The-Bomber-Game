@@ -198,6 +198,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                }
                                break;
                         }
+                        break;
                 }
                 case SessionState::InGame: {
                         switch(message_->type_) {
@@ -222,8 +223,17 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         client_name_->game_info_.opponent_->message_atop.tail_y = message_->tail_y;
                                         client_name_->game_info_.opponent_->message_atop.type_ = PacketType::DoubleCoord;
                                         PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
+                                        break;
+                                }
+                                case PacketType::GameOver: {
+                                        LOG(Info) << "Game Over!" << endl;
+                                        LOG(Info) << client_name_->host_username_ << "wins!" << endl;
+                                        client_name_->state = SessionState::ServerWaiting;
+                                        client_name_->game_info_.opponent_->state = SessionState::ServerWaiting;
+                                        break;
                                 }
                         }
+                        break;
                 }
         }
 

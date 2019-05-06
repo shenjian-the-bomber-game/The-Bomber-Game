@@ -60,7 +60,7 @@ enum class PacketType : uint8_t {
     Board = 0x0C,
     SingleCoord = 0x0D,
     DoubleCoord = 0x0E,
-    // FileUsername = 0x0F,
+    GameOver = 0x0F,
 };
 
 struct DataPacketHeader {

@@ -27,9 +27,6 @@ private:
 
    // vector<uint8_t> pack_String(Message_To_Pre message);
 
-
-
-
     unsigned char * unpack_String(DataPacket packet);
     ResponseType unpack_Response(DataPacket packet);
     void plane(int curr, int *Plane[5]);

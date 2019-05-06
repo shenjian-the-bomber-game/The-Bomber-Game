@@ -469,6 +469,11 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
             unpack_DoubleCoord(packet, message);
         }
 
+        //GameOver
+        if(packet.type == PacketType::GameOver) {
+            ;
+        }
+
         // if(packet.type == PacketType::Configuration){
         //         message = unpack_Configuration(packet);
         //         client->message_ptoa.config_ = message.config_;
@@ -479,9 +484,9 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
         //         client->message_ptoa.user_name_list_ = message.user_name_list_;
         // }
 
-        // client->message_ptoa.type_ = packet.type;
-        // // cout << (packet.type == PacketType::Password) << endl;
-        // // cout << (client->message_ptoa.type_ == PacketType::Password) << endl;
+        client->message_ptoa.type_ = packet.type;
+        // cout << (packet.type == PacketType::Password) << endl;
+        // cout << (client->message_ptoa.type_ == PacketType::Password) << endl;
     
         // // cout << messageuser_name_ << endl;
         // // cout << &client << endl;
