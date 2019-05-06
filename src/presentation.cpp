@@ -191,6 +191,62 @@ vector<uint8_t> PresentationLayer::pack_UserName(Message_To_Pre * message, strin
     return temp;
 }
 
+vector<uint8_t> PresentationLayer::pack_Board(struct GameInfo game_info_){
+    vector<uint8_t> temp;
+    
+    // descriptor
+    temp.push_back((uint8_t)PacketType::Board);
+
+    // length
+    int length = (uint16_t)12;
+    temp.push_back((uint8_t)(length >> 8) );
+    temp.push_back((uint8_t)(length) );
+
+    //plane coordinate
+    // std::vector<uint8_t> temp(game_info_.plane_coord_, game_info_.plane_coord_ + 12);
+    for(int i = 0; i < 12; i++){
+        temp.push_back(game_info_.plane_coord_[i]);
+    }
+    return temp;
+}
+
+vector<uint8_t> PresentationLayer::pack_SingleCoord(Message_To_Pre message){
+    vector<uint8_t> temp;
+
+    // descriptor
+    temp.push_back((uint8_t)PacketType::SingleCoord);
+
+    // length
+    int length = (uint16_t)2;
+    temp.push_back((uint8_t)(length >> 8) );
+    temp.push_back((uint8_t)(length) );
+
+    // single
+    temp.push_back((uint8_t)message.x);
+    temp.push_back((uint8_t)message.y);
+
+    return temp;
+}
+
+vector<uint8_t> PresentationLayer::pack_DoubleCoord(Message_To_Pre message){
+    vector<uint8_t> temp;
+
+    // descriptor
+    temp.push_back((uint8_t)PacketType::DoubleCoord);
+
+    // length
+    int length = (uint16_t)4;
+    temp.push_back((uint8_t)(length >> 8) );
+    temp.push_back((uint8_t)(length) );
+
+    // single
+    temp.push_back((uint8_t)message.head_x);
+    temp.push_back((uint8_t)message.head_y);
+    temp.push_back((uint8_t)message.tail_x);
+    temp.push_back((uint8_t)message.tail_y);
+
+    return temp;
+}
 // vector<uint8_t> PresentationLayer::pack_History(Message_To_Pre * message){
 //     vector<uint8_t> temp;
 //     uint8_t descriptor;
@@ -279,6 +335,27 @@ StatusCode PresentationLayer::pack_Message(Client *client){
             client->send_buffer.push(temp_str);
         }
     }
+    
+    //InGame:
+    if(client->state == SessionState::InGame){
+        //send board set by opponent
+        if(message.type_ == PacketType::Board){
+            temp_str = pack_Board(client->game_info_);
+            client->send_buffer.push(temp_str);
+        }
+
+        //single coord
+        if(message.type_ == PacketType::SingleCoord){
+            temp_str = pack_SingleCoord(message);
+            client->send_buffer.push(temp_str);
+        }
+
+        //double coord
+        if(message.type_ == PacketType::DoubleCoord){
+            temp_str = pack_DoubleCoord(message);
+            client->send_buffer.push(temp_str);
+        }
+    }
     //     //send Text to some other client
     //     if(message.type_ == PacketType::Text){
     //         //use message_ptoa to find the receiver client
@@ -347,7 +424,7 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
     while( client->recv_buffer.has_complete_packet()){
         //client->recv_buffer.has_complete_packet()
         DataPacket packet;
-        Message_To_App *message = client->message_ptoa;
+        Message_To_App *message = &client->message_ptoa;
         unsigned char *temp_data;
 
         //packet from TransLayer
@@ -379,7 +456,17 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
 
         //board unpacking
         if((packet.type == PacketType::Board) ){
-            client->game_info_.win_board_ = unpack_Board(packet, );
+            unpack_Board(packet, message);
+        }
+
+        //single coord unpacking
+        if(packet.type == PacketType::SingleCoord){
+            unpack_SingleCoord(packet, message);
+        }
+
+        //double coord unpacking
+        if(packet.type == PacketType::DoubleCoord){
+            unpack_DoubleCoord(packet, message);
         }
 
         // if(packet.type == PacketType::Configuration){
@@ -418,7 +505,6 @@ unsigned char * PresentationLayer::unpack_String(DataPacket packet){
 }
 
 ResponseType PresentationLayer::unpack_Response(DataPacket packet){
-    Message_To_App * message;
     vector<uint8_t>::iterator iter;
 
     iter = packet.data.begin();
@@ -428,8 +514,7 @@ ResponseType PresentationLayer::unpack_Response(DataPacket packet){
 
 //function:
 //   this will retrun a 5x5 plane in upward
-int [5]* PresentationLayer::plane(int curr){
-    int Plane[5][5];
+void PresentationLayer::plane(int curr, int *Plane[5]){
     for(int x = 0; x < 5; x++)
         Plane[x][1] = curr*10;
     
@@ -437,24 +522,25 @@ int [5]* PresentationLayer::plane(int curr){
     Plane[2][0] = curr*10+1;
     Plane[2][3] = curr*10+2;
     
-    return Plane;
+    return;
 }
 
-int [10]* PresentationLayer::unpack_Board(DataPacket packet, Client * client){
-    int board[10][10] = {{0}};
+void PresentationLayer::unpack_Board(DataPacket packet, Message_To_App * message){
+    int (*board)[10];
+    board = message->board_;
     vector<uint8_t>::iterator iter;
 
-    curr = 1;
+    int x1,x2,y1,y2,curr = 1;
     for(iter = packet.data.begin(); iter != packet.data.end(); iter+=4){
         x1 = (int)(*iter);
         y1 = (int)(*(iter+1));
         x2 = (int)(*(iter+2));
         y2 = (int)(*(iter+3));
         
-        client->game_info_.plane_coord_[(curr-1)*4  ] = (int)(*iter);
-        client->game_info_.plane_coord_[(curr-1)*4+1] = (int)(*(iter+1));
-        client->game_info_.plane_coord_[(curr-1)*4+2] = (int)(*(iter+2));
-        client->game_info_.plane_coord_[(curr-1)*4+3] = (int)(*(iter+3));
+        message->plane_coord_[(curr-1)*4  ] = (int)(*iter);
+        message->plane_coord_[(curr-1)*4+1] = (int)(*(iter+1));
+        message->plane_coord_[(curr-1)*4+2] = (int)(*(iter+2));
+        message->plane_coord_[(curr-1)*4+3] = (int)(*(iter+3));
 
         //head & tail
         board[x1][y2] = curr*10+1;
@@ -508,7 +594,29 @@ int [10]* PresentationLayer::unpack_Board(DataPacket packet, Client * client){
         curr += 1;
     }//end of for
 
-    return board;
+    return;
+}
+
+void PresentationLayer::unpack_SingleCoord(DataPacket packet, Message_To_App * message){
+    vector<uint8_t>::iterator iter;
+    
+    iter = packet.data.begin();
+    message->x = (int)(*iter);
+    message->y = (int)(*(iter+1));
+    
+    return;
+}
+
+void PresentationLayer::unpack_DoubleCoord(DataPacket packet, Message_To_App * message){
+    vector<uint8_t>::iterator iter;
+    
+    iter = packet.data.begin();
+    message->head_x = (int)(*iter);
+    message->head_y = (int)(*(iter+1));
+    message->tail_x = (int)(*(iter+2));
+    message->tail_y = (int)(*(iter+3));
+
+    return;
 }
 
 // Message_To_App PresentationLayer::unpack_Configuration(DataPacket packet){

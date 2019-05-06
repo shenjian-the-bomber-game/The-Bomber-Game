@@ -163,8 +163,6 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                        client_name_->state = SessionState::WaitForBoard;
                                                        Client_A->game_info_.opponent_ = client_name_;
                                                        client_name_->game_info_.opponent_ = Client_A;
-                                                       Client_A->game_info_.is_my_turn_ = true;
-                                                       client_name_->game_info_.is_my_turn_ = false;
                                                 }
                                                 else {
                                                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
@@ -189,10 +187,14 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                 case SessionState::WaitForBoard: {
                         switch(message_->type_) {
                                case PacketType::Board: {
-                                       LOG(Info) << "Server 1 receive board from client" << endl;
-                                       LOG(Info) << "Need to Store it in the Server 2" << endl;
-                                       client_name_->state = SessionState::InGame;
-                                       break;
+                                        LOG(Info) << "Server 1 receive board from client" << endl;
+                                        LOG(Info) << "Need to Store it in the Server 2" << endl;
+                                        LOG(Info) << "Send Board information to Client 2" << endl;
+                                        client_name_->state = SessionState::InGame;
+                                        CopyBoard(client_name_, client_name_->game_info_.opponent_);
+                                        client_name_->game_info_.opponent_->message_atop.type_ = PacketType::Board;
+                                        PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
+                                        break;
                                }
                                break;
                         }
@@ -201,12 +203,37 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                         switch(message_->type_) {
                                 case PacketType::SingleCoord: {
                                         LOG(Info) << "Server receive a single coordinate!" << endl;
-                                        LOG(Info) << "Server need to give the information to another side of the game & return the value to the client." << endl;
-
+                                        LOG(Info) << "Server need to give the information to another side of the game." << endl;
+                                        LOG(Info) << "Client " << client_name_->host_username_ << "take a step: " << message_->x << ", " << message_->y << endl;
+                                        client_name_->game_info_.opponent_->message_atop.x = message_->x;
+                                        client_name_->game_info_.opponent_->message_atop.y = message_->y;
+                                        client_name_->game_info_.opponent_->message_atop.type_ = PacketType::SingleCoord;
+                                        PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
+                                        break;
+                                }
+                                case PacketType::DoubleCoord: {
+                                        LOG(Info) << "Server receive a double coordinate!" << endl;
+                                        LOG(Info) << "Server need to give the information to another side of the game." << endl;
+                                        LOG(Info) << "Client " << client_name_->host_username_ << "make a guess: " << message_->head_x << ", " << message_->head_y
+                                                  << "  " << message_->tail_x << ", " << message_->tail_y << endl;
+                                        client_name_->game_info_.opponent_->message_atop.head_x = message_->head_x;
+                                        client_name_->game_info_.opponent_->message_atop.head_y = message_->head_y;
+                                        client_name_->game_info_.opponent_->message_atop.tail_x = message_->tail_x;
+                                        client_name_->game_info_.opponent_->message_atop.tail_y = message_->tail_y;
+                                        client_name_->game_info_.opponent_->message_atop.type_ = PacketType::DoubleCoord;
+                                        PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
                                 }
                         }
                 }
         }
 
         return ;
+}
+
+void ApplicationLayer::CopyBoard(Client* client_A, Client* client_B)
+{
+        std::memcpy(client_B->game_info_.win_board_, client_A->message_ptoa.board_, 100);
+        std::memcpy(client_B->game_info_.plane_coord_, client_A->message_ptoa.plane_coord_, 12);
+
+        return;
 }

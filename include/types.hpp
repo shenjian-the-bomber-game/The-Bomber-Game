@@ -152,6 +152,10 @@ struct Message_To_App{
     std::string password_; 
     std::string user_name_b_;
     int board_[10][10];
+    uint8_t plane_coord_[12];
+    int x, y;
+    int head_x, head_y;
+    int tail_x, tail_y;
     // std::string media_text_;
     // std::vector<std::string> user_name_list_;
     // std::string file_name_;
@@ -165,6 +169,9 @@ struct Message_To_Pre{
     // int config_;
     std::vector<std::string> onlineuser_;
     std::string user_name_a_;
+    int x,y;
+    int head_x, head_y;
+    int tail_x, tail_y;
 };
 
 // not sure if struct group_text should be kept or just use text[] instead ?
@@ -187,7 +194,6 @@ struct GameInfo {
     Client* opponent_;
     int win_board_[10][10];
     uint8_t plane_coord_[12];
-    bool is_my_turn_;
 };
 
 struct Client {
@@ -199,7 +205,7 @@ struct Client {
 
     int client_id;
 
-    CircularQueue recv_bufferususer_name_a_er_name_a_;
+    CircularQueue recv_buffer;
     std::queue< std::vector<uint8_t> > send_buffer;
 
     int socket_fd;
