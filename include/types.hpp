@@ -190,6 +190,8 @@ struct file{
 // #ifndef CLIENT_H
 // #define CLIENT_H
 
+struct Client;
+
 struct GameInfo {
     Client* opponent_;
     int win_board_[10][10];

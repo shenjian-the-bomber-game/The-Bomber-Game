@@ -238,7 +238,7 @@ Client * TransferLayer::find_by_username_cnt(Client *client){
     return NULL;
 }
 
-std::vector<std::string> find_all_user() {
+std::vector<std::string> TransferLayer::find_all_user() {
     // vector for username
     vector<string> namestack_;
 
