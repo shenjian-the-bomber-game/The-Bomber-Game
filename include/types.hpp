@@ -114,7 +114,7 @@ enum class SessionState : unsigned int {
 	// WaitForNewPasswd,
     ServerWaiting,      
 	// WaitForText,
-    WatiForBoard,
+    WaitForBoard,
     InGame,
 };
 
@@ -151,6 +151,7 @@ struct Message_To_App{
     std::string user_name_;
     std::string password_; 
     std::string user_name_b_;
+    int board_[10][10];
     // std::string media_text_;
     // std::vector<std::string> user_name_list_;
     // std::string file_name_;

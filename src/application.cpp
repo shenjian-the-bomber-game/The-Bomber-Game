@@ -131,7 +131,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         // LOG(Debug) << message_->user_name_ << endl;
                                         Client* Client_B;
                                         if((Client_B = TransLayerInstance.find_by_username(message_->user_name_b_)) !=NULL) {
-                                                if(client_B->state != SessionState::ServerWaiting) {
+                                                if(Client_B->state != SessionState::ServerWaiting) {
                                                         respond_->type_ = PacketType::InvitResponse;
                                                         respond_->respond_ = ResponseType::Busy;
                                                         PreLayerInstance.pack_Message(client_name_);
@@ -170,11 +170,11 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
                                                 }
                                         }
-                                        else if(message_->respond_ == ResponseType::Refuse) {
+                                        else if(message_->respond_ == ResponseType::RefuseInvit) {
                                                 Client* Client_A;
                                                 if((Client_A = TransLayerInstance.find_by_username(respond_->user_name_a_)) != NULL) {
                                                        Client_A->message_atop.type_ = PacketType::InvitResponse;
-                                                       Client_A->message_atop.respond_ = ResponseType::Refuse;
+                                                       Client_A->message_atop.respond_ = ResponseType::RefuseInvit;
                                                        PreLayerInstance.pack_Message(Client_A); 
                                                 }
                                                 else {
