@@ -234,7 +234,7 @@ StatusCode PresentationLayer::pack_Message(Client *client){
     message = client->message_atop;
 
     // special handling for multi-login
-    if(message_atop.type_ == PacketType::Refuse){
+    if(message.type_ == PacketType::Refuse){
         //TODO: refuse and disconnect
     }
 
@@ -379,7 +379,7 @@ StatusCode PresentationLayer::unpack_DataPacket(Client *client){
 
         //board unpacking
         if((packet.type == PacketType::Board) ){
-            client->game_info_.win_board_ = unpack_Board(packet);
+            client->game_info_.win_board_ = unpack_Board(packet, );
         }
 
         // if(packet.type == PacketType::Configuration){
@@ -440,7 +440,7 @@ int [5]* PresentationLayer::plane(int curr){
     return Plane;
 }
 
-int [10]* PresentationLayer::unpack_Board(DataPacket packet){
+int [10]* PresentationLayer::unpack_Board(DataPacket packet, Client * client){
     int board[10][10] = {{0}};
     vector<uint8_t>::iterator iter;
 
@@ -448,9 +448,14 @@ int [10]* PresentationLayer::unpack_Board(DataPacket packet){
     for(iter = packet.data.begin(); iter != packet.data.end(); iter+=4){
         x1 = (int)(*iter);
         y1 = (int)(*(iter+1));
-        x2 = (int)(*(iter+3));
-        y2 = (int)(*(iter+4));
+        x2 = (int)(*(iter+2));
+        y2 = (int)(*(iter+3));
         
+        client->game_info_.plane_coord_[(curr-1)*4  ] = (int)(*iter);
+        client->game_info_.plane_coord_[(curr-1)*4+1] = (int)(*(iter+1));
+        client->game_info_.plane_coord_[(curr-1)*4+2] = (int)(*(iter+2));
+        client->game_info_.plane_coord_[(curr-1)*4+3] = (int)(*(iter+3));
+
         //head & tail
         board[x1][y2] = curr*10+1;
         board[x2][y2] = curr*10+2;
