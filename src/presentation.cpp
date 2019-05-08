@@ -9,6 +9,32 @@ extern TransferLayer TransLayerInstance;
 
 using namespace std;
 
+void PresentationLayer::pack_ErrorOccurs(Client* client) {
+    vector<uint8_t> temp;
+
+    //descriptor
+    uint8_t descriptor = (uint8_t) PacketType::Refuse;
+    temp.clear();
+    temp.push_back(descriptor);
+
+    //length = 1
+    temp.push_back((uint8_t)0);
+    temp.push_back((uint8_t)1);
+
+    //response
+    temp.push_back((uint8_t)ResponseType::ErrorOccurs);
+
+    client->send_buffer.push(temp);    
+
+    return;
+}
+
+void PresentationLayer::broadcast_Offline(Client* client) {
+    AppLayerInstance.BroadcastOffline(client);
+
+    return;
+}
+
 bool PresentationLayer::check_passwordFormat(unsigned char *password){
     unsigned char * ptr = password;
     if(!strcmp((char *)password, "123456")) return true;
@@ -172,8 +198,8 @@ vector<uint8_t> PresentationLayer::pack_UserName(Message_To_Pre * message, strin
     temp.push_back((uint8_t)PacketType::UserName);
 
     //push_back user name length
-    str = *message->onlineuser_.begin(); 
-    length = (uint16_t)(str.length() + 1);
+    str = *(message->onlineuser_.begin()); 
+    length = (uint16_t)(str.length());
     temp.push_back((uint8_t)(length >> 8) );
     temp.push_back((uint8_t)(length) );
 
@@ -188,6 +214,30 @@ vector<uint8_t> PresentationLayer::pack_UserName(Message_To_Pre * message, strin
     //erase host name
     message->onlineuser_.erase(message->onlineuser_.begin());     
     
+    return temp;
+}
+
+
+std::vector<uint8_t> PresentationLayer::pack_UserChange(Message_To_Pre message) {
+    vector<uint8_t> temp;
+
+    //descriptor
+    temp.push_back((uint8_t)PacketType::OnlineUser);
+
+    //push_back user name length
+    string str = message.user_change_;
+    uint16_t length = (uint16_t)(str.length());
+    temp.push_back((uint8_t)(length >> 8) );
+    temp.push_back((uint8_t)(length) );
+    
+    //push back user name
+    const char* c;
+    c = str.c_str();
+    while((*c) != '\0'){
+        temp.push_back((uint8_t)(*c) );
+        c++;
+    }
+
     return temp;
 }
 
@@ -292,6 +342,12 @@ StatusCode PresentationLayer::pack_Message(Client *client){
     // special handling for multi-login
     if(message.type_ == PacketType::Refuse){
         //TODO: refuse and disconnect
+        client->send_buffer.push(pack_Response(message));
+    }
+    
+    // Broadcast the new log in information
+    if(message.type_ == PacketType::OnlineUser){
+        client->send_buffer.push(pack_UserChange(message));
     }
 
     //cases based on status

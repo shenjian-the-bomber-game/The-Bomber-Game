@@ -31,6 +31,20 @@ bool ApplicationLayer::ResetPasswd(std::string user_name_, std::string password_
         return DatabaseConnection::get_instance()->reset_password(user_name_, password_);
 }
 
+void ApplicationLayer::BroadcastOffline(Client* client)
+{
+        std::vector<Client*> client_list_;
+        client_list_ = TransLayerInstance.find_all_client(client);
+        std::vector<Client*>::iterator it = client_list_.begin();
+        for(; it != client_list_.end(); it++) {
+                (*it)->message_atop.type_ = PacketType::OfflineUser;
+                (*it)->message_atop.user_change_ = client->host_username_;
+                PreLayerInstance.pack_Message(*it);
+        }
+
+        return;
+}
+
 void ApplicationLayer::MessageToApp(Client *client_name_)
 {
         // main process here
@@ -95,6 +109,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         if((client_temp = TransLayerInstance.find_by_username_cnt(client_name_)) !=NULL) {
                                                 client_temp->message_atop.type_ = PacketType::Refuse;
                                                 client_temp->message_atop.respond_ = ResponseType::ErrorOccurs;
+                                                client_temp->state = SessionState::Error;
                                                 PreLayerInstance.pack_Message(client_temp);
                                                 respond_->type_ = PacketType::Refuse;
                                                 respond_->respond_ = ResponseType::AlreadyLoggedIn;
@@ -116,8 +131,8 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         std::vector<Client*>::iterator it = client_list_.begin();
                                         for(; it != client_list_.end(); it++) {
                                                 (*it)->message_atop.type_ = PacketType::OnlineUser;
-                                                (*it)->message_atop.onlineuser_.
-                                                ;
+                                                (*it)->message_atop.user_change_ = client_name_->host_username_;
+                                                PreLayerInstance.pack_Message(*it);
                                         }
                                         break;
                                 }

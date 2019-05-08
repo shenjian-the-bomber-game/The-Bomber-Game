@@ -170,6 +170,7 @@ struct Message_To_Pre{
     // int config_;
     std::vector<std::string> onlineuser_;
     std::string user_name_a_;
+    std::string user_change_;
     int x,y;
     int head_x, head_y;
     int tail_x, tail_y;

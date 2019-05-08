@@ -89,12 +89,16 @@ void TransferLayer::select_loop(int listener) {
                             PreLayerInstance.unpack_DataPacket(&el);
                             if (el.state == SessionState::Error) {
                                 // remove client here
+                                PreLayerInstance.pack_ErrorOccurs(&el);
                                 remove_client(el);
+                                PreLayerInstance.broadcast_Offline(&el);
                                 break;
                             }
                         } else {
                             // remove client here
+                            PreLayerInstance.pack_ErrorOccurs(&el);
                             remove_client(el);
+                            PreLayerInstance.broadcast_Offline(&el);
                             break;
                         }
                     }
@@ -102,7 +106,9 @@ void TransferLayer::select_loop(int listener) {
                     cout << "send buffer transport " << el.send_buffer.size() << endl;
                     if (FD_ISSET(el.socket_fd, &write_fds) && try_send(el) != StatusCode::OK) {
                         // remove client
+                        PreLayerInstance.pack_ErrorOccurs(&el);
                         remove_client(el);
+                        PreLayerInstance.broadcast_Offline(&el);
                     }
                 }
 
@@ -243,7 +249,7 @@ std::vector<std::string> TransferLayer::find_all_user(Client* host_client) {
     vector<string> namestack_;
 
     list<Client>::iterator it = session_set.begin();
-    for(; it != session_set.end() && it != host_client; it++) {
+    for(; it != session_set.end() && &(*it) != host_client; it++) {
         namestack_.push_back(it->host_username_);
     }
 
@@ -255,8 +261,8 @@ std::vector<Client *> TransferLayer::find_all_client(Client* host_client) {
     std::vector<Client*> clientstack_;
 
     list<Client>::iterator it = session_set.begin();
-    for(; it != session_set.end() && it != host_client; it++) {
-        clientstack_.push_back(it);
+    for(; it != session_set.end() && &(*it) != host_client; it++) {
+        clientstack_.push_back(&(*it));
     }
 
     return clientstack_;
