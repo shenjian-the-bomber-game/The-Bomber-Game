@@ -110,12 +110,13 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         // respond_->config_ = DatabaseConnection::get_instance()->retrive_history_count(client_name_->host_username_);
                                         PreLayerInstance.pack_Message(client_name_);
                                         
-                                        // Find all client & broadcast to all other users
+                                        // Find all client & broadcast new online user to others
                                         std::vector<Client*> client_list_;
                                         client_list_ = TransLayerInstance.find_all_client(client_name_);
                                         std::vector<Client*>::iterator it = client_list_.begin();
                                         for(; it != client_list_.end(); it++) {
-                                                // **********
+                                                (*it)->message_atop.type_ = PacketType::OnlineUser;
+                                                (*it)->message_atop.onlineuser_.
                                                 ;
                                         }
                                         break;
