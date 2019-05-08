@@ -236,6 +236,13 @@ StatusCode PresentationLayer::pack_Message(Client *client){
 
     //cases based on status
 
+    if((client->state == SessionState::Acceptance)) {
+        if(message.type_ == PacketType::InfoResponse) {
+            temp_str = pack_Response(message);
+            client->send_buffer.push(temp_str);
+        }
+    }
+
     //WaitForPasswd, Error:
     if((client->state == SessionState::WaitForPasswd) 
             || (client->state == SessionState::Error)) {
