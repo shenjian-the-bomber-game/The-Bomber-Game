@@ -35,7 +35,6 @@ void ApplicationLayer::BroadcastOffline(Client* client)
 {
         std::vector<Client*> client_list_;
         client_list_ = TransLayerInstance.find_all_client(client);
-        LOG(Debug) << (*client_list_.begin())->host_username_ << endl;
         std::vector<Client*>::iterator it = client_list_.begin();
         for(; it != client_list_.end(); it++) {
                 (*it)->message_atop.type_ = PacketType::OfflineUser;
@@ -139,10 +138,10 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                 case false: {
                                         // password error
                                         LOG(Info) << "Recv Wrong Password" << endl;
-                                        client_name_->state = SessionState::Acceptance;
                                         respond_->type_ = PacketType::PasswordResponse;
                                         respond_->respond_ = ResponseType::WrongPassword;
                                         PreLayerInstance.pack_Message(client_name_);
+                                        client_name_->state = SessionState::Acceptance;
                                         break;
                                 }
                                 break;
