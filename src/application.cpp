@@ -74,19 +74,17 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         respond_->type_ = PacketType::InfoResponse;
                                         respond_->respond_ = ResponseType::OK;
                                         client_name_->host_username_ = message_->user_name_;
-                                        client_name_->state = SessionState::Acceptance;
                                         LOG(Info) << "Check User Exists" << std::endl;
                                         PreLayerInstance.pack_Message(client_name_);
+                                        client_name_->state = SessionState::WaitForPasswd;
                                        break;
                                }
                                case false: {
                                        // account not exists
                                         respond_->type_ = PacketType::InfoResponse;
                                         respond_->respond_ = ResponseType::UserNotExist;
-                                        client_name_->state = SessionState::Acceptance;
                                         LOG(Error) << "User not Exists" << std::endl;
                                         PreLayerInstance.pack_Message(client_name_);
-                                        client_name_->state = SessionState::WaitForPasswd;
                                         break;
                                }
                         }
