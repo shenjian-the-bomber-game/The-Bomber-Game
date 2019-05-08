@@ -244,11 +244,11 @@ StatusCode PresentationLayer::pack_Message(Client *client){
     }
 
     //WaitForPasswd, Error:
-    if((client->state == SessionState::WaitForPasswd) 
-            || (client->state == SessionState::Error)) {
-        temp_str = pack_Response(message);
-        client->send_buffer.push(temp_str);
-    }
+    // if((client->state == SessionState::WaitForPasswd) 
+    //         || (client->state == SessionState::Error)) {
+    //     temp_str = pack_Response(message);
+    //     client->send_buffer.push(temp_str);
+    // }
 
     //ServerWaiting: 
     if((client->state == SessionState::ServerWaiting) ){
