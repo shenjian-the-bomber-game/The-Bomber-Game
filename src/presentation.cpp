@@ -189,7 +189,7 @@ vector<uint8_t> PresentationLayer::pack_Invit(Message_To_Pre message){
     return temp;
 }
 
-vector<uint8_t> PresentationLayer::pack_UserName(Message_To_Pre * message, string host_name){
+vector<uint8_t> PresentationLayer::pack_UserName(Message_To_Pre * message){
     vector<uint8_t> temp;
     uint16_t length;
     string str;
@@ -366,7 +366,7 @@ StatusCode PresentationLayer::pack_Message(Client *client){
             //sync online user list 
             while(message.onlineuser_.size() != 0){
                 //online user names
-                temp_str = pack_UserName(&message, client->host_username_);
+                temp_str = pack_UserName(&message);
                 client->send_buffer.push(temp_str);
                 //history
                 // temp_str = pack_History(&message);

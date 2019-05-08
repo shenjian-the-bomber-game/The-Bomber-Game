@@ -82,7 +82,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                        // account not exists
                                         respond_->type_ = PacketType::InfoResponse;
                                         respond_->respond_ = ResponseType::UserNotExist;
-                                        client_name_->state = SessionState::Error;
+                                        client_name_->state = SessionState::Acceptance;
                                         LOG(Error) << "User not Exists" << std::endl;
                                         PreLayerInstance.pack_Message(client_name_);
                                         break;
@@ -139,7 +139,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                 case false: {
                                         // password error
                                         LOG(Info) << "Recv Wrong Password" << endl;
-                                        client_name_->state = SessionState::WaitForPasswd;
+                                        client_name_->state = SessionState::Acceptance;
                                         respond_->type_ = PacketType::PasswordResponse;
                                         respond_->respond_ = ResponseType::WrongPassword;
                                         PreLayerInstance.pack_Message(client_name_);
