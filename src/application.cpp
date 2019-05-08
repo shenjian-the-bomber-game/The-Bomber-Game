@@ -35,6 +35,7 @@ void ApplicationLayer::BroadcastOffline(Client* client)
 {
         std::vector<Client*> client_list_;
         client_list_ = TransLayerInstance.find_all_client(client);
+        LOG(Debug) << (*client_list_.begin())->host_username_ << endl;
         std::vector<Client*>::iterator it = client_list_.begin();
         for(; it != client_list_.end(); it++) {
                 (*it)->message_atop.type_ = PacketType::OfflineUser;
