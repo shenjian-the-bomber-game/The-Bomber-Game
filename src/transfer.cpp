@@ -238,16 +238,28 @@ Client * TransferLayer::find_by_username_cnt(Client *client){
     return NULL;
 }
 
-std::vector<std::string> TransferLayer::find_all_user() {
+std::vector<std::string> TransferLayer::find_all_user(Client* host_client) {
     // vector for username
     vector<string> namestack_;
 
     list<Client>::iterator it = session_set.begin();
-    for(; it != session_set.end(); it++) {
+    for(; it != session_set.end() && it != host_client; it++) {
         namestack_.push_back(it->host_username_);
     }
 
     return namestack_;
+}
+
+std::vector<Client *> TransferLayer::find_all_client(Client* host_client) {
+    // vector for username
+    std::vector<Client*> clientstack_;
+
+    list<Client>::iterator it = session_set.begin();
+    for(; it != session_set.end() && it != host_client; it++) {
+        clientstack_.push_back(it);
+    }
+
+    return clientstack_;
 }
 
 // //return:

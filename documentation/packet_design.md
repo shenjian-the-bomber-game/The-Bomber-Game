@@ -103,11 +103,30 @@
 |  UserName  |    0x06    |
 |  SyncEnd   |    0x08    |
 
-#### UserName  `0x06`
+
+
+**OfflineUser** `0x10`
+
+|  0   |            1,2            |        3... 31        |
+| :--: | :-----------------------: | :-------------------: |
+| 0x10 | user_name length(2 bytes) | user_name (broadcast) |
+
+
+
+#### **UserName**  `0x06`
 
 |  0   |            1, 2            |         3 ... 31         |
 | :--: | :------------------------: | :----------------------: |
 | 0x06 | user_name length (2 bytes) | user_name (host to user) |
+
+
+**OnlineUser** `0x07`
+
+|  0   |            1,2            |        3... 31        |
+| :--: | :-----------------------: | :-------------------: |
+| 0x07 | user_name length(2 bytes) | user_name (broadcast) |
+
+
 
 #### SyncEnd   `0x08`
 
@@ -116,7 +135,6 @@
 |  0   | 1， 2  |  3   |
 | :--: | :----: | :--: |
 | 0x08 | 0x0000 |  0   |
-
 
 
 

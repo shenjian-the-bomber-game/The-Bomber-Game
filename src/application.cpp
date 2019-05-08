@@ -106,9 +106,18 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         client_name_->state = SessionState::ServerWaiting;
                                         respond_->type_ = PacketType::OnlineList;
                                         // TODO FIND ALL THE ONLINE USERS
-                                        respond_->onlineuser_ = TransLayerInstance.find_all_user();
+                                        respond_->onlineuser_ = TransLayerInstance.find_all_user(client_name_);
                                         // respond_->config_ = DatabaseConnection::get_instance()->retrive_history_count(client_name_->host_username_);
                                         PreLayerInstance.pack_Message(client_name_);
+                                        
+                                        // Find all client & broadcast to all other users
+                                        std::vector<Client*> client_list_;
+                                        client_list_ = TransLayerInstance.find_all_client(client_name_);
+                                        std::vector<Client*>::iterator it = client_list_.begin();
+                                        for(; it != client_list_.end(); it++) {
+                                                // **********
+                                                ;
+                                        }
                                         break;
                                 }
                                 case false: {
