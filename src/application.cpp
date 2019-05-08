@@ -72,8 +72,8 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                        // account exists
                                         respond_->type_ = PacketType::InfoResponse;
                                         respond_->respond_ = ResponseType::OK;
-                                        client_name_->state = SessionState::WaitForPasswd;
                                         client_name_->host_username_ = message_->user_name_;
+                                        client_name_->state = SessionState::Acceptance;
                                         LOG(Info) << "Check User Exists" << std::endl;
                                         PreLayerInstance.pack_Message(client_name_);
                                        break;
