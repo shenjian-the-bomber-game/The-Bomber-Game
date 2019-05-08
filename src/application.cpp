@@ -85,6 +85,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         client_name_->state = SessionState::Acceptance;
                                         LOG(Error) << "User not Exists" << std::endl;
                                         PreLayerInstance.pack_Message(client_name_);
+                                        client_name_->state = SessionState::WaitForPasswd;
                                         break;
                                }
                         }
