@@ -138,7 +138,6 @@
 
 
 
-
 ------------------------
 
 ## Game
@@ -215,3 +214,28 @@
 >If you win, your client will send frame GameOver to the server;
 >
 >If you lose, your client will recv frame GameOver from the server.
+
+---------------------
+
+## Game board design
+
+values
+
+
+$$
+n\ 飞机编号 \ \ n=1,2,3 \\
+t\ 飞机部位 \ \  t=1\ 表示机身, t=2\ 表示机头，t=3\ 表示机尾 \\ 
+g\ 对方是否猜出 \ \ g=0\ 未猜出，g=1\ 已猜出
+\ \\
+board[i][j] = 
+\begin{align}
+g*100+n*10+t\\
+\end{align}
+$$
+
+| 数值 | 含义 |
+| :--: | :--: |
+|      |      |
+|      |      |
+|      |      |
+
