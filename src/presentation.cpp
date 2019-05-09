@@ -287,6 +287,12 @@ StatusCode PresentationLayer::pack_Message(Client *client){
         }
     }
     
+    //WaitInfoResponse:
+    if((client->state == SessionState::Responding) ) {
+        if(message.type_ == PacketType::InvitResponse){
+            client->send_buffer.push(pack_Response(message) );
+        }
+    }
     //InGame:
     if(client->state == SessionState::InGame){
         //send board set by opponent
