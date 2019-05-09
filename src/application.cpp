@@ -175,6 +175,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                        Client_A->message_atop.type_ = PacketType::InvitResponse;
                                                        Client_A->message_atop.respond_ = ResponseType::RefuseInvit;
                                                        PreLayerInstance.pack_Message(Client_A); 
+                                                       client_name_->state = SessionState::ServerWaiting;
                                                 }
                                                 else {
                                                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
@@ -212,6 +213,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                        Client_A->message_atop.type_ = PacketType::InvitResponse;
                                                        Client_A->message_atop.respond_ = ResponseType::RefuseInvit;
                                                        PreLayerInstance.pack_Message(Client_A); 
+                                                       client_name_->state = SessionState::ServerWaiting;
                                                 }
                                                 else {
                                                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
