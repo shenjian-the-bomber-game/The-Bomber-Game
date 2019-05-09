@@ -152,7 +152,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                         switch(message_->type_) {
                                 case PacketType::InvitResponse: {
                                         LOG(Info) << "Client A recv invitation response from CLinet B" << endl;
-                                        LOG(Info) << "Server B need to forward the message to CLient A" << endl;
+                                        LOG(Info) << "Debug Enter WaitInvitResponse." << endl;
                                         if(message_->respond_ == ResponseType::OK) {
                                                 // client need to know that its invitation works
                                                 client_name_->message_atop.type_ = PacketType::InvitResponse;
@@ -209,6 +209,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                        Client_A->message_atop.respond_ = ResponseType::RefuseInvit;
                                                        PreLayerInstance.pack_Message(Client_A); 
                                                        client_name_->state = SessionState::ServerWaiting;
+                                                       Client_A->state = SessionState::ServerWaiting;
                                                 }
                                                 else {
                                                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
