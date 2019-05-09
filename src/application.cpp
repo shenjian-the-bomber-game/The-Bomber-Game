@@ -173,7 +173,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         else if(message_->respond_ == ResponseType::RefuseInvit) {
                                                 client_name_->message_atop.type_ = PacketType::InvitResponse;
                                                 client_name_->message_atop.respond_ = ResponseType::RefuseInvit;
-                                                PreLayerInstance.pack_Message(Client_name_); 
+                                                PreLayerInstance.pack_Message(client_name_); 
                                                 client_name_->state = SessionState::ServerWaiting;
                                         }
                                         break;
