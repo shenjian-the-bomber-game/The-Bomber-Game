@@ -113,7 +113,8 @@ enum class SessionState : unsigned int {
     Error,
     WaitForPasswd,
     ServerWaiting,
-    WaitInvitResponse,      
+    WaitInvitResponse,
+    Responding,      
     WaitForBoard,
     InGame,
 };
