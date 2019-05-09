@@ -112,9 +112,8 @@ enum class SessionState : unsigned int {
     Acceptance,         // On acceptance, create a new client instance
     Error,
     WaitForPasswd,
-	// WaitForNewPasswd,
-    ServerWaiting,      
-	// WaitForText,
+    ServerWaiting,
+    WaitInvitResponse,      
     WaitForBoard,
     InGame,
 };

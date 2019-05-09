@@ -148,31 +148,8 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                         }
                         break;
                 }
-                case SessionState::ServerWaiting: {
+                case SessionState::WaitInvitResponse: {
                         switch(message_->type_) {
-                                case PacketType::SendInvit: {
-                                        LOG(Info) << "Client A send invitation to Cline B" << endl;
-                                        // LOG(Debug) << message_->user_name_ << endl;
-                                        Client* Client_B;
-                                        if((Client_B = TransLayerInstance.find_by_username(message_->user_name_b_)) !=NULL) {
-                                                if(Client_B->state != SessionState::ServerWaiting) {
-                                                        respond_->type_ = PacketType::InvitResponse;
-                                                        respond_->respond_ = ResponseType::Busy;
-                                                        PreLayerInstance.pack_Message(client_name_);
-                                                }
-                                                else {
-                                                        Client_B->message_atop.user_name_a_ = client_name_->host_username_;
-                                                        Client_B->message_atop.type_ = PacketType::RecvInvit;
-                                                        PreLayerInstance.pack_Message(Client_B);
-                                                }
-                                        }
-                                        else {
-                                                respond_->type_ = PacketType::InvitResponse;
-                                                respond_->respond_ = ResponseType::UserNotExist;
-                                                PreLayerInstance.pack_Message(client_name_);
-                                        }
-                                        break;
-                                }
                                 case PacketType::InvitResponse: {
                                         LOG(Info) << "Client A recv invitation response from CLinet B" << endl;
                                         LOG(Info) << "Server B need to forward the message to CLient A" << endl;
@@ -205,6 +182,66 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         }
                                         break;
                                 }
+                        }
+                }
+                case SessionState::ServerWaiting: {
+                        switch(message_->type_) {
+                                case PacketType::SendInvit: {
+                                        LOG(Info) << "Client A send invitation to Cline B" << endl;
+                                        // LOG(Debug) << message_->user_name_ << endl;
+                                        Client* Client_B;
+                                        if((Client_B = TransLayerInstance.find_by_username(message_->user_name_b_)) !=NULL) {
+                                                if(Client_B->state != SessionState::ServerWaiting) {
+                                                        respond_->type_ = PacketType::InvitResponse;
+                                                        respond_->respond_ = ResponseType::Busy;
+                                                        PreLayerInstance.pack_Message(client_name_);
+                                                }
+                                                else {
+                                                        Client_B->message_atop.user_name_a_ = client_name_->host_username_;
+                                                        Client_B->message_atop.type_ = PacketType::RecvInvit;
+                                                        PreLayerInstance.pack_Message(Client_B);
+                                                        client_name_->state = SessionState::WaitInvitResponse;
+                                                }
+                                        }
+                                        else {
+                                                respond_->type_ = PacketType::InvitResponse;
+                                                respond_->respond_ = ResponseType::UserNotExist;
+                                                PreLayerInstance.pack_Message(client_name_);
+                                        }
+                                        break;
+                                }
+                                // case PacketType::InvitResponse: {
+                                //         LOG(Info) << "Client A recv invitation response from CLinet B" << endl;
+                                //         LOG(Info) << "Server B need to forward the message to CLient A" << endl;
+                                //         if(message_->respond_ == ResponseType::OK) {
+                                //                 // Clinet A need to know that its invitation works
+                                //                 Client* Client_A;
+                                //                 if((Client_A = TransLayerInstance.find_by_username(respond_->user_name_a_)) != NULL) {
+                                //                        Client_A->message_atop.type_ = PacketType::InvitResponse;
+                                //                        Client_A->message_atop.respond_ = ResponseType::OK;
+                                //                        PreLayerInstance.pack_Message(Client_A); 
+                                //                        Client_A->state = SessionState::WaitForBoard;
+                                //                        client_name_->state = SessionState::WaitForBoard;
+                                //                        Client_A->game_info_.opponent_ = client_name_;
+                                //                        client_name_->game_info_.opponent_ = Client_A;
+                                //                 }
+                                //                 else {
+                                //                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
+                                //                 }
+                                //         }
+                                //         else if(message_->respond_ == ResponseType::RefuseInvit) {
+                                //                 Client* Client_A;
+                                //                 if((Client_A = TransLayerInstance.find_by_username(respond_->user_name_a_)) != NULL) {
+                                //                        Client_A->message_atop.type_ = PacketType::InvitResponse;
+                                //                        Client_A->message_atop.respond_ = ResponseType::RefuseInvit;
+                                //                        PreLayerInstance.pack_Message(Client_A); 
+                                //                 }
+                                //                 else {
+                                //                         LOG(Error) << "Can't Find Client A after B responsed." << endl;
+                                //                 }
+                                //         }
+                                //         break;
+                                // }
                         }
                         break;
                 }
