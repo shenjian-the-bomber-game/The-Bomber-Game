@@ -151,8 +151,8 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                 case SessionState::WaitInvitResponse: {
                         switch(message_->type_) {
                                 case PacketType::InvitResponse: {
-                                        LOG(Info) << "Client A recv invitation response from CLinet B 0" << endl;
-                                        LOG(Info) << "Server B need to forward the message to CLient A 0" << endl;
+                                        LOG(Info) << "Client A recv invitation response from CLinet B" << endl;
+                                        LOG(Info) << "Server B need to forward the message to CLient A" << endl;
                                         if(message_->respond_ == ResponseType::OK) {
                                                 // Clinet A need to know that its invitation works
                                                 Client* Client_A;
@@ -188,8 +188,8 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                 case SessionState::Responding: {
                         switch(message_->type_) {
                                 case PacketType::InvitResponse: {
-                                        LOG(Info) << "Client A recv invitation response from CLinet B 1" << endl;
-                                        LOG(Info) << "Server B need to forward the message to CLient A 1" << endl;
+                                        LOG(Info) << "Client A recv invitation response from CLinet B" << endl;
+                                        LOG(Info) << "Server B need to forward the message to CLient A" << endl;
                                         if(message_->respond_ == ResponseType::OK) {
                                                 // Clinet A need to know that its invitation works
                                                 Client* Client_A;

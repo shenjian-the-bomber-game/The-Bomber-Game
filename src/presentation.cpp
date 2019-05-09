@@ -75,7 +75,7 @@ vector<uint8_t> PresentationLayer::pack_Response(Message_To_Pre message){
             temp.push_back((uint8_t)(length >> 8) ); 
             temp.push_back((uint8_t)length );
             temp.push_back(*((uint8_t*)&message.respond_));  
-            break;          
+            break;
     }
 
     return temp;
@@ -288,11 +288,12 @@ StatusCode PresentationLayer::pack_Message(Client *client){
     }
     
     //WaitInfoResponse:
-    if((client->state == SessionState::Responding) ) {
+    if((client->state == SessionState::WaitInvitResponse) ) {
         if(message.type_ == PacketType::InvitResponse){
             client->send_buffer.push(pack_Response(message) );
         }
     }
+
     //InGame:
     if(client->state == SessionState::InGame){
         //send board set by opponent
