@@ -606,19 +606,21 @@ angular
               globalSelf.cache.user = {
                 name: value
               };
+              $rootScope.$apply();
               // prompt for password
               smalltalk.prompt('登陆', '密码：', '', {
                 type: 'password'
               }).then(function (value) {
 
                 globalPassword = value;
+                $rootScope.$apply();
                 //globalSelf.connect();
                 //ZZY
                 if (!globalSelf.connected()) {
                   globalSelf.connect();
                 } else {
                   globalSelf.initiateLoginSequence();
-                }
+                };
 
 
               }, function () {
@@ -1070,6 +1072,7 @@ angular
         */
 
         // Modified by ZZY
+
         ChatService.prototype.changeState = function (rawData, isSend) {
           // @rawData: { packetType: int, payload: Buffer }
           // @isSend: true for sending packet
@@ -1097,6 +1100,7 @@ angular
               console.log('get new OnlineUser packet');
               if (globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)) < 0) {
                 globalSelf.onlineUserList.push(globalSelf.decodeUserNamePacket(rawData));
+                $rootScope.$apply();
                 console.log('new online user:', globalSelf.onlineUserList[globalSelf.onlineUserList.length - 1]);
               } else {
                 console.log('user already exist in the list');
@@ -1107,6 +1111,7 @@ angular
               console.log('get new OfflineUser packet');
               if (globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)) >= 0) {
                 let offline = globalSelf.onlineUserList.splice(globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)), 1);
+                $rootScope.$apply();
                 console.log('offline user:', offline[0]);
               } else {
                 console.log('user not exist in the list');
@@ -1137,6 +1142,7 @@ angular
                       console.log('another game');
                       ChatService.prototype.sessionState = SessionState.ClientWaiting;
                       globalSelf.opponentName = " ";
+                      $rootScope.$apply();
                     })
                     .catch(() => {
                       console.log('exit');
@@ -1269,6 +1275,7 @@ angular
                   case ResponseType.OK:
                     console.log('ResponseType.OK');
                     Chat.hasValidUser = true;
+                    $rootScope.$apply();
 
                     // TODO: This is problematic!
                     // this.cache.validOnline = true;
@@ -1297,6 +1304,7 @@ angular
                   case PacketType.SyncUserName:
                     if (globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)) < 0) {
                       globalSelf.onlineUserList.push(globalSelf.decodeUserNamePacket(rawData));
+                      $rootScope.$apply();
                       console.log('online user:', globalSelf.onlineUserList[globalSelf.onlineUserList.length-1]);
                     }
                     break;
@@ -1332,6 +1340,7 @@ angular
                 // Being invited
                 // Here nothing has been done by user, this state is triggered because a packet has been received.
                 globalSelf.opponentName = " ";
+                $rootScope.$apply();
                 console.log('being invited');
                 ChatService.prototype.sessionState = SessionState.ClientInvited;
                 changeState(rawData);
@@ -1349,7 +1358,9 @@ angular
                       // invitation accepted
                       console.log('Accepted invitation from ' + inviter);
                       globalSelf.Game.prototype.isMyTurn = false;
+                      $rootScope.$apply();
                       globalSelf.opponentName = inviter;
+                      $rootScope.$apply();
                       const buf = Buffer.allocUnsafe(1);
                       buf.writeUInt8(ResponseType.OK, 0);
                       let packet = constructPacket({
@@ -1404,6 +1415,7 @@ angular
                     smalltalk.alert('通知', '对方同意了您的请求，即将进入游戏').then(
                         function () {
                           globalSelf.Game.prototype.isMyTurn = true;
+                          $rootScope.$apply();
                           ChatService.prototype.sessionState = SessionState.InGame;
                           changeState();
                         }
@@ -1432,6 +1444,7 @@ angular
                 // not get any packet
                 // draw planes
                 smalltalk.alert('通知', '请为对方画三架飞机');
+                $rootScope.$apply();
               } else {
                 // get packet from server
                 switch (rawData.packetType) {
@@ -1442,8 +1455,9 @@ angular
                     break;
                   case PacketType.SingleCoord:
                     // received a single coordinate.
-                    globalSelf.Game.prototype.isMyTurn = true;
                     console.log('get single coord');
+                    globalSelf.Game.prototype.isMyTurn = true;
+                    $rootScope.$apply();
                     break;
                   case PacketType.DoubleCoord:
                     // received two coordinates.
