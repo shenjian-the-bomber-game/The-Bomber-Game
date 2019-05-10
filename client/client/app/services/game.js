@@ -64,6 +64,7 @@ let Game = function (Chat) {
     Game.prototype.isMyTurn = false;
     Game.prototype.boardString = "";
     Game.prototype.Chat = Chat;
+    Game.prototype.recvBoard = false;
     // Game.prototype.PacketType = PacketType;
     // console.log("*****************", Game.prototype.Chat.socket)
     // Game.prototype.Chat.socket.on('data', Game.prototype.Chat.socketDataCallback);
@@ -447,6 +448,7 @@ var WinCheck = function () {
         }
     }
 
+    console.log("********************************************************");
     return true;
 }
 
@@ -518,6 +520,7 @@ var recvOpponentBoard = function (payload) {
     }
     console.log("Write opponentBoard succeed.");
     console.log("opponentMap: ", this.opponentMap);
+    this.recvBoard = true;
 }
 
 // Game();

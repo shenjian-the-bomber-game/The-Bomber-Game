@@ -1466,6 +1466,7 @@ angular
                     // received opponent's three planes.
                     console.log('received opponent\'s three planes');
                     globalSelf.Game.prototype.recvOpponentBoard(rawData.payload);
+                    $rootScope.$apply();
                     break;
                   case PacketType.SingleCoord:
                     // received a single coordinate.
