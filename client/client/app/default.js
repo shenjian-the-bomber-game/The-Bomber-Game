@@ -24,7 +24,7 @@ var DEFAULT = {
     BASE_URL: process.env.NODE_ENV == 'DEVELOPMENT' ? "https://radiant-river-70847.herokuapp.com" : "http://localhost:3333",
     // IP: '192.168.0.254',
     // IP: '127.0.0.1',
-    IP: '127.0.0.1',
+    IP: '10.60.102.252',
     PORT: 20350,
 
   },

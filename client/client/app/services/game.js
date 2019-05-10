@@ -65,6 +65,8 @@ let Game = function (Chat) {
     Game.prototype.boardString = "";
     Game.prototype.Chat = Chat;
     // Game.prototype.PacketType = PacketType;
+    // console.log("*****************", Game.prototype.Chat.socket)
+    // Game.prototype.Chat.socket.on('data', Game.prototype.Chat.socketDataCallback);
 
     // init
     Game.prototype.gameMap = [];
@@ -96,6 +98,35 @@ var isCoordEqual = function (cord1, cord2) {
     return (cord1[0] == cord2[0]) && (cord1[1] == cord2[1])
 };
 
+// var socketCallBack = function (data) {
+//     // change state machine and process data here
+//     console.log('data received', data);
+
+//     // append data to existing buffer and check for length
+//     receiveBuffer = Buffer.concat([receiveBuffer, data]);
+
+//     if (receiveBuffer.length < 3) {
+//     receiveBuffer = Buffer.concat([receiveBuffer, data]);
+//     }
+
+//     let payloadLength = receiveBuffer.readUInt16BE(1);
+//     while (receiveBuffer.length >=3 && receiveBuffer.length >= payloadLength + 3) {
+//     console.log('receiveBuffer', receiveBuffer);
+//     let payloadEndPosition = 3 + payloadLength;
+//     let packet = decodePacket(receiveBuffer.slice(0, payloadEndPosition));
+//     if (payloadEndPosition == receiveBuffer.length) {
+//         receiveBuffer = Buffer.allocUnsafe(0);
+//         payloadLength = 0;
+//     } else {
+//         receiveBuffer = receiveBuffer.slice(payloadEndPosition, receiveBuffer.length);
+//         payloadLength = receiveBuffer.readUInt16BE(1);
+//     }
+//     changeState(packet, false);
+//     console.log('remaining data length', receiveBuffer.length);
+//     console.log('payloadLength', payloadLength);
+//     }
+// };
+
 var Click = function (x, y, isDouble) {
     // transfer string to integer
     x = Number(x);
@@ -113,7 +144,7 @@ var Click = function (x, y, isDouble) {
                     this.planeMap[x][y] = this.state * 10 + Color.planeHead;
                 } else {
                     this.tail = [x, y];
-                    if (this.AddOnePlane(false, this.head, this.tail) == false) {
+                    if (this.AddOnePlane(false, this.head, this.tail, 0) == false) {
                         console.log("Add Plane failed");
                         // this.planeMap[x][y] = Color.notKnown;
                         this.planeMap[this.head[0]][this.head[1]] = Color.notKnown;
@@ -135,7 +166,7 @@ var Click = function (x, y, isDouble) {
                     this.planeMap[x][y] = this.state * 10 + Color.planeHead;
                 } else {
                     this.tail = [x, y];
-                    if (this.AddOnePlane(false, this.head, this.tail) == false) {
+                    if (this.AddOnePlane(false, this.head, this.tail, 0) == false) {
                         console.log("Add Plane failed");
                         this.planeMap[this.head[0]][this.head[1]] = Color.notKnown;
                         // this.planeMap[x][y] = Color.notKnown;
@@ -234,7 +265,7 @@ var Click = function (x, y, isDouble) {
     }
 }
 
-var AddOnePlane = function (isOpponent, head, tail) {
+var AddOnePlane = function (isOpponent, head, tail, planeNumber) {
     let x = head[0];
     let y = head[1];
     // c: the direction of the plane
@@ -242,8 +273,15 @@ var AddOnePlane = function (isOpponent, head, tail) {
     let c = PlaneDirection.upward;
     // temp map
     var changeMap;
-    if(isOpponent == false) changeMap = this.planeMap;
-    else changeMap = this.opponentMap; 
+    var planeIndex;
+    if(isOpponent == false) {
+        changeMap = this.planeMap;
+        planeIndex = this.state;
+    }
+    else {
+        changeMap = this.opponentMap; 
+        planeIndex = planeNumber;
+    }
 
     var resultMap = new Array(10);
     for(let i = 0; i < 10; i++) {
@@ -284,7 +322,7 @@ var AddOnePlane = function (isOpponent, head, tail) {
                     }
                     
                     if(this.planeShape[ci][cj] == 0) ;
-                    else resultMap[i][j] = this.planeShape[ci][cj] + this.state * 10;
+                    else resultMap[i][j] = this.planeShape[ci][cj] + planeIndex * 10;
                     cj++;
                 }
                 ci++;
@@ -314,7 +352,7 @@ var AddOnePlane = function (isOpponent, head, tail) {
                     }
                     
                     if(this.planeShape[cj][ci] == 0);
-                    else resultMap[i][j] = this.planeShape[cj][ci] + this.state * 10;
+                    else resultMap[i][j] = this.planeShape[cj][ci] + planeIndex * 10;
                     cj++;
                 }
                 ci++;
@@ -344,7 +382,7 @@ var AddOnePlane = function (isOpponent, head, tail) {
                     }
                     
                     if(this.planeShape[ci][cj] == 0);
-                    else resultMap[i][j] = this.planeShape[ci][cj] + this.state * 10;
+                    else resultMap[i][j] = this.planeShape[ci][cj] + planeIndex * 10;
                     cj++;
                 }
                 ci++;
@@ -374,7 +412,7 @@ var AddOnePlane = function (isOpponent, head, tail) {
                     }
                     
                     if(this.planeShape[cj][ci] == 0);
-                    else resultMap[i][j] = this.planeShape[cj][ci] + this.state * 10;
+                    else resultMap[i][j] = this.planeShape[cj][ci] + planeIndex * 10;
                     cj++;
                 }
                 ci++;
@@ -453,15 +491,17 @@ var coordinatePacket = function (payload, isDouble) {
 
 var recvOpponentBoard = function (payload) {
     var BoardStr = payload;
+    let j = 1;
     for(let i = 0; i < BoardStr.length; i += 4){
-        var head = [Number(BoardStr[i]), Number(BoardStr[i+1])]; 
-        var tail = [Number(BoardStr[i+2]), Number(BoardStr[i+3])];
+        var head = [Number(BoardStr[i]) - 48, Number(BoardStr[i+1]) - 48]; 
+        var tail = [Number(BoardStr[i+2] - 48), Number(BoardStr[i+3] - 48)];
 
         var changeMap = this.opponentMap;
-        if (this.AddOnePlane(true, head, tail) == false) {
+        if (this.AddOnePlane(true, head, tail, j) == false) {
             console.log("recv opponentBoard: Add Plane failed");
             return false;
         }
+        j++;
     }
     console.log("Write opponentBoard succeed.");
     console.log("opponentMap: ", this.opponentMap);
@@ -474,6 +514,7 @@ Game.prototype.Click = Click;
 Game.prototype.WinCheck = WinCheck;
 Game.prototype.coordinatePacket = coordinatePacket;
 Game.prototype.recvOpponentBoard = recvOpponentBoard;
+// Game.prototype.Chat.socket.on('data', Chat.socketDataCallback);
 // Game.prototype.Chat = Chat;
 
 // console.log(Game.prototype.isMyTurn);

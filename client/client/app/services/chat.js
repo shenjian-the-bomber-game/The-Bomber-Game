@@ -1430,7 +1430,6 @@ angular
                 // not get any packet
                 // draw planes
                 smalltalk.alert('通知', '请为对方画三架飞机');
-                ChatService.prototype.sessionState = SessionState.InGame;
               } else {
                 // get packet from server
                 switch (rawData.packetType) {
@@ -1558,6 +1557,9 @@ angular
           socket.write(packet);
         };
         var socket = $Socket.socket;
+        // setInterval(function () {
+        //   console.log(socket);
+        // }, 1000);
         var sendPacket = ChatService.prototype.sendPacket;
 
         // ZZY
