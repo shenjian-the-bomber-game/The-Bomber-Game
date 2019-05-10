@@ -158,7 +158,6 @@ angular
          * @constructor
          */
         var Chat = this;
-        var sessionState = SessionState.FirstThingsFirst;
         var globalSelf;
         var globalSocket;
         var wasConnected = false;
@@ -189,8 +188,10 @@ angular
             };
           };
 
-          ChatService.prototype.rowLabels = Array.apply(null, {length: 10}).map(Number.call, Number);
-          ChatService.prototype.colLabels = Array.apply(null, {length: 10}).map(Number.call, Number);
+          ChatService.prototype.sessionState = SessionState.FirstThingsFirst;
+
+          ChatService.prototype.rowLabels = Array.apply(null, { length: 10 }).map(Number.call, Number);
+          ChatService.prototype.colLabels = Array.apply(null, { length: 10 }).map(Number.call, Number);
           // debug
           // ChatService.prototype.gameMap = [];
           // for(let i = 0; i < 10; i++) {
@@ -325,11 +326,11 @@ angular
         // On click send request.
         ChatService.prototype.sendRequest = function (user) {
           // should only be clicked when client waiting.
-          if (sessionState == SessionState.ClientInviting) {
+          if (ChatService.prototype.sessionState == SessionState.ClientInviting) {
             smalltalk.alert("警告", "您刚才邀请了别人，正在等待对方回复，此时不可以发送邀请请求");
-          } else if (sessionState == SessionState.ClientInvited) {
+          } else if (ChatService.prototype.sessionState == SessionState.ClientInvited) {
             smalltalk.alert("警告", "您已被人邀请，此时不可以发送邀请请求");
-          } else if (sessionState == SessionState.InGame || sessionState == SessionState.GreatWall) {
+          } else if (ChatService.prototype.sessionState == SessionState.InGame || ChatService.prototype.sessionState == SessionState.GreatWall) {
             smalltalk.alert("警告", "您正在游戏的过程中，此时不可以发送邀请请求");
           } else {
             console.log("send request to: ", user);
@@ -490,7 +491,7 @@ angular
         };
 
         ChatService.prototype.validOnline = function () {
-          console.log('should be after response ok', this.settings.user(), Chat.hasValidUser, this.settings.user() && Chat.hasValidUser)
+          console.log(ChatService.prototype.sessionState)
           return this.settings.user() && Chat.hasValidUser;
           //return this.settings.user() && this.cache.validOnline;
         };
@@ -1072,7 +1073,7 @@ angular
         ChatService.prototype.changeState = function (rawData, isSend) {
           // @rawData: { packetType: int, payload: Buffer }
           // @isSend: true for sending packet
-          console.log('changeState, sessionState =', sessionState);
+          console.log('changeState, ChatService.prototype.sessionState =', ChatService.prototype.sessionState);
           if (rawData) {
             console.log('changeState rawData', rawData);
             // console.log('changeState, sessionState =', sessionState);
@@ -1113,7 +1114,7 @@ angular
               return;
             }
             // busy
-            else if (rawData.packetType == PacketType.RecvInvit && (sessionState == SessionState.ClientInviting || sessionState == SessionState.InGame || (sessionState == SessionState.ClientInvited && !notResponsingInvitation))) {
+            else if (rawData.packetType == PacketType.RecvInvit && (ChatService.prototype.sessionState == SessionState.ClientInviting || ChatService.prototype.sessionState == SessionState.InGame || (ChatService.prototype.sessionState == SessionState.ClientInvited && !notResponsingInvitation))) {
               // Busy gaming
               console.log('busy gaming');
               /*
@@ -1128,13 +1129,13 @@ angular
               return;
             }
             else if (rawData.packetType == PacketType.GameOver) {
-              if (sessionState == SessionState.ClientWaiting || sessionState == SessionState.ClientInvited || sessionState == SessionState.ClientInviting || sessionState == SessionState.InGame) {
+              if (ChatService.prototype.sessionState == SessionState.ClientWaiting || ChatService.prototype.sessionState == SessionState.ClientInvited || ChatService.prototype.sessionState == SessionState.ClientInviting || ChatService.prototype.sessionState == SessionState.InGame) {
                 console.log('game over, you lose');
                 smalltalk
                     .confirm('警告', '您输了！再来一局？')
                     .then(() => {
                       console.log('another game');
-                      sessionState = SessionState.ClientWaiting;
+                      ChatService.prototype.sessionState = SessionState.ClientWaiting;
                       globalSelf.opponentName = " ";
                     })
                     .catch(() => {
@@ -1144,7 +1145,7 @@ angular
               }
               else {
                 console.log('rawData.packetType: '+ rawData.packetType);
-                smalltalk.alert('警告', '服务器端TCP包错误，rawData.packetType: ' + rawData.packetType + ', sessionState: ' + sessionState).then(
+                smalltalk.alert('警告', '服务器端TCP包错误，rawData.packetType: ' + rawData.packetType + ', sessionState: ' + ChatService.prototype.sessionState).then(
                     () => {
                       globalSelf.killConnection();
                     }
@@ -1157,7 +1158,8 @@ angular
             }
           }
 
-          switch (sessionState) {
+          console.log("Debug1", ChatService.prototype.sessionState);
+          switch (ChatService.prototype.sessionState) {
             case SessionState.GreatWall:
               console.log('Howdy! This is temporarily the end!');
               console.log('hasValidUser: ', Chat.hasValidUser);
@@ -1169,13 +1171,13 @@ angular
             case SessionState.FirstThingsFirst:
               Chat.hasValidUser = false;
               console.log('app start');
-              sessionState = SessionState.Init;
+              ChatService.prototype.sessionState = SessionState.Init;
               globalSelf.autoconnect();
               break;
             case SessionState.Init:
               console.log('info', rawData);
               sendPacket(rawData);
-              sessionState = SessionState.WaitForInfoResponse;
+              ChatService.prototype.sessionState = SessionState.WaitForInfoResponse;
               break;
             case SessionState.WaitForInfoResponse:
               console.log('WaitForInfoResponse');
@@ -1199,7 +1201,7 @@ angular
                     smalltalk.alert('警告', '用户名不存在，请重新登录').then(
                         function() {
                           Chat.hasValidUser = false;
-                          sessionState = SessionState.FirstThingsFirst;
+                          ChatService.prototype.sessionState = SessionState.FirstThingsFirst;
                           changeState();
                         }
                     );
@@ -1223,7 +1225,7 @@ angular
                     sendPacket(passwordPacket);
 
                     // step state
-                    sessionState = SessionState.WaitForPasswordResponse;
+                    ChatService.prototype.sessionState = SessionState.WaitForPasswordResponse;
                     break;
                   default:
                     console.log('unknown ResponseType');
@@ -1259,7 +1261,7 @@ angular
                     smalltalk.alert('警告', '密码错误，请重新登录').then(
                         function() {
                           Chat.hasValidUser = false;
-                          sessionState = SessionState.FirstThingsFirst;
+                          ChatService.prototype.sessionState = SessionState.FirstThingsFirst;
                           changeState();
                         }
                     );
@@ -1270,7 +1272,7 @@ angular
 
                     // TODO: This is problematic!
                     // this.cache.validOnline = true;
-                    sessionState = SessionState.UserSync;
+                    ChatService.prototype.sessionState = SessionState.UserSync;
                     break;
                   default:
                     console.log('unknown ResponseType');
@@ -1300,7 +1302,7 @@ angular
                     break;
                   case PacketType.SyncEnd:
                     console.log('sync online user end');
-                    sessionState = SessionState.ClientWaiting;
+                    ChatService.prototype.sessionState = SessionState.ClientWaiting;
                     break;
 
                   default:
@@ -1324,14 +1326,14 @@ angular
                 // clickedInviteButton = false;
                 console.log('invite others');
                 sendPacket(rawData);
-                sessionState = SessionState.ClientInviting;
+                ChatService.prototype.sessionState = SessionState.ClientInviting;
               }
               else {
                 // Being invited
                 // Here nothing has been done by user, this state is triggered because a packet has been received.
                 globalSelf.opponentName = " ";
                 console.log('being invited');
-                sessionState = SessionState.ClientInvited;
+                ChatService.prototype.sessionState = SessionState.ClientInvited;
                 changeState(rawData);
               }
               break;
@@ -1355,7 +1357,7 @@ angular
                       });
                       sendPacket(packet);
                       notResponsingInvitation = true;
-                      sessionState = SessionState.InGame;
+                      ChatService.prototype.sessionState = SessionState.InGame;
                       changeState();
                     })
                     .catch(() => {
@@ -1370,7 +1372,7 @@ angular
                       sendPacket(packet);
                       notResponsingInvitation = true;
                       // Wait to invite others or to be invited.
-                      sessionState = SessionState.ClientWaiting;
+                      ChatService.prototype.sessionState = SessionState.ClientWaiting;
                     });
               } else {
                 // Get wrong packet
@@ -1395,23 +1397,23 @@ angular
                 switch (infoData) {
                   case ResponseType.UserNotExist:
                     smalltalk.alert('警告', '您选中的用户不存在，请重新选择或等待被选');
-                    sessionState = SessionState.ClientWaiting;
+                    ChatService.prototype.sessionState = SessionState.ClientWaiting;
                     break;
                   case ResponseType.OK:
                     smalltalk.alert('通知', '对方同意了您的请求，即将进入游戏').then(
                         function () {
-                          sessionState = SessionState.InGame;
+                          ChatService.prototype.sessionState = SessionState.InGame;
                           changeState();
                         }
                     );
                     break;
                   case ResponseType.RefuseInvit:
                     smalltalk.alert('警告', '对方拒绝了您的请求，请重新选择或等待被选');
-                    sessionState = SessionState.ClientWaiting;
+                    ChatService.prototype.sessionState = SessionState.ClientWaiting;
                     break;
                   case ResponseType.Busy:
                     smalltalk.alert('警告', '对方正在进行游戏或正在处理其他人的邀请，请重新选择或等待被选');
-                    sessionState = SessionState.ClientWaiting;
+                    ChatService.prototype.sessionState = SessionState.ClientWaiting;
                     break;
                   default:
                     smalltalk.alert('警告', '不可处理的ResponseType: ' + infoData).then(
@@ -1428,7 +1430,7 @@ angular
                 // not get any packet
                 // draw planes
                 smalltalk.alert('通知', '请为对方画三架飞机');
-                sessionState = SessionState.InGame;
+                ChatService.prototype.sessionState = SessionState.InGame;
               } else {
                 // get packet from server
                 switch (rawData.packetType) {
@@ -1590,6 +1592,7 @@ angular
         ChatService.prototype.Game = Game(chatInstance);
 
         // Instantiates a new chat service
+        // Chat.prototype.SessionState = SessionState.FirstThingsFirst;
         return chatInstance;
 
 
