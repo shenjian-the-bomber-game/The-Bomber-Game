@@ -217,7 +217,7 @@ var Click = function (x, y, isDouble) {
                         packetType: PacketType.GameOver,
                         payload: ""
                     };
-                    // SendPacket(gameOverPacket);
+                    this.Chat.sendPacket(gameOverPacket);
                     console.log("GameOver", gameOverPacket);
                 }
             }
@@ -269,7 +269,7 @@ var Click = function (x, y, isDouble) {
                         packetType: PacketType.GameOver,
                         payload: ""
                     };
-                    // SendPacket(gameOverPacket);
+                    this.Chat.sendPacket(gameOverPacket);
                     console.log("GameOver2", gameOverPacket);
                 }
             }
