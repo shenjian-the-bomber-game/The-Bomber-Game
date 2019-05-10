@@ -97,6 +97,7 @@ let Game = function (Chat) {
     Game.prototype.boardString = "";
     Game.prototype.Chat = Chat;
     Game.prototype.recvBoard = false;
+    Game.prototype.headColor = Color.notKnown;
     // Game.prototype.PacketType = PacketType;
     // console.log("*****************", Game.prototype.Chat.socket)
     // Game.prototype.Chat.socket.on('data', Game.prototype.Chat.socketDataCallback);
@@ -165,7 +166,6 @@ var Click = function (x, y, isDouble) {
     x = Number(x);
     y = Number(y);
     console.log('Game.Click', isDouble);
-    console.log()
 
     if (isDouble == false) {
         switch (this.state) {
@@ -278,6 +278,9 @@ var Click = function (x, y, isDouble) {
         } else {
             if (isCoordEqual(this.head, [-1, -1])) {
                 this.head = [x, y];
+                if(this.gameMap[x][y] % 10 == Color.planeHead) {
+                    this.headColor = this.gameMap[x][y];
+                }
                 this.gameMap[x][y] = Color.doubleCoordHead;
             } else {
                 this.tail = [x, y];
@@ -299,11 +302,20 @@ var Click = function (x, y, isDouble) {
                         packetType: PacketType.DoubleCoord,
                         payload: this.head[0].toString() + this.head[1].toString() + this.tail[0].toString() + this.tail[1].toString()
                     }
-                    // SendPacket(doubleCoordinatePacket);
+                    this.Chat.sendPacket(doubleCoordinatePacket);
+                    this.head = [-1, -1];
                     console.log("doubleCoordinatePacket", doubleCoordinatePacket);
                 } else {
                     this.gameMap[x][y] = Color.notKnown;
-                    this.gameMap[this.head[0]][this.gameMap[1]] = Color.notKnown;
+                    this.gameMap[this.head[0]][this.head[1]] = this.headColor;
+                    this.head = [-1, -1];
+                    this.headColor = Color.notKnown;
+                    let doubleCoordinatePacket = {
+                        packetType: PacketType.DoubleCoord,
+                        payload: this.head[0].toString() + this.head[1].toString() + this.tail[0].toString() + this.tail[1].toString()
+                    }
+                    this.Chat.sendPacket(doubleCoordinatePacket);
+                    console.log("doubleCoordinatePacket2", doubleCoordinatePacket);
                 }
                 this.isMyTurn = false;
                 if (this.WinCheck() == true) {
