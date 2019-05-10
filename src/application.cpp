@@ -339,6 +339,8 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         LOG(Info) << "Game Over!" << endl;
                                         LOG(Info) << client_name_->host_username_ << "wins!" << endl;
                                         client_name_->state = SessionState::ServerWaiting;
+                                        client_name_->game_info_.opponent_->message_atop.type_ = PacketType::GameOver;
+                                        PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
                                         client_name_->game_info_.opponent_->state = SessionState::ServerWaiting;
                                         break;
                                 }
