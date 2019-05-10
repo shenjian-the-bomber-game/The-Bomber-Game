@@ -175,11 +175,10 @@ var Click = function (x, y, isDouble) {
                         return;
                     } else {
                         console.log("Successfully Add Plane!");
+                        this.state = GameState.Move;
                         if (this.isMyTurn == true) {
-                            this.state = GameState.Move;
                             console.log("I need to make first move");
                         } else {
-                            this.state = GameState.Wait;
                             console.log('I need to wait the other side');
                         }
                         this.boardString += this.head[0].toString() + this.head[1].toString() + this.tail[0].toString() + this.tail[1].toString();
