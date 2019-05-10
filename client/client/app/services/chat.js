@@ -243,7 +243,14 @@ angular
             let location = planeCode % 10;
             let colorHex = '#b2bec3';
             switch (location) {
-                // body
+              // miss hit
+              case 0:
+                colorHex = '#000000';
+                return {
+                  "background-color": colorHex,
+                  "border-color":  colorHex
+                };
+              // body
               case 1:
               case 4:
                 colorHex = '#fdcb6e';
@@ -274,8 +281,15 @@ angular
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
+              case 8:
+                colorHex = '#d63031';
+                return {
+                  "background-color": colorHex,
+                  "border-color":  colorHex
+                };
                 //  default
-              case 0:
+
+              case 9:
               default:
                 return {
                   "background-color": colorHex,

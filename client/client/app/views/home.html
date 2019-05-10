@@ -75,12 +75,18 @@
                             ng-style="$Chat.mapToColor($Chat.Game.prototype.gameMap[rowLabel][colLabel])"
                             ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
                             ng-disabled="$Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 9 || !$Chat.Game.prototype.isMyTurn || $Chat.sessionState != 11"
-                    > </button>
+                    > {{$Chat.Game.prototype.gameMap[rowLabel][colLabel]}}</button>
+                    <!-- > </button> -->
+                    <!-- // debug -->
+                    <!-- <button class="badge btn-primary"
+                            ng-style="$Chat.mapToColor($Chat.gameMap[rowLabel][colLabel])"
+                            ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
+                    > {{$Chat.gameMap[rowLabel][colLabel]}}</button> -->
                 </div>
             </div>
         </div>
 <!--        <br>-->
-    </div>
+    </divo
 
     <!--  <div class="top">-->
     <!--    <div class="avatar" style="float: right; padding-right: 12px">-->

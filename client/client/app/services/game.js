@@ -132,6 +132,7 @@ var Click = function (x, y, isDouble) {
     x = Number(x);
     y = Number(y);
     console.log('Game.Click', isDouble);
+    console.log()
 
     if (isDouble == false) {
         switch (this.state) {
@@ -198,6 +199,7 @@ var Click = function (x, y, isDouble) {
             case GameState.Move: {
                 console.log("Move x, y:" , x , " ", y);
                 this.gameMap[x][y] = this.opponentMap[x][y];
+                if(this.gameMap[x][y] == Color.notKnown) this.gameMap[x][y] = Color.miss;
                 // this.state = GameState.Wait;
                 this.isMyTurn = false;
                 // need to send Single Coordinate Packet
