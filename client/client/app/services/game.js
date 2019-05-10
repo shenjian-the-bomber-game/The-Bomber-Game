@@ -442,7 +442,7 @@ var WinCheck = function () {
     console.log(this.gameMap);
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
-            if (this.opponentMap[i][j] != Color.notKnown && this.gameMap[i][j] == 0) return false;
+            if (this.opponentMap[i][j] != Color.notKnown && this.gameMap[i][j] == Color.notKnown) return false;
         }
     }
 
