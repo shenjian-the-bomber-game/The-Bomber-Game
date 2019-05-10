@@ -26,7 +26,7 @@ const Color = Object.freeze({
     "notKnown": 9,
 });
 
-let Game = function () {
+let Game = function (sendPacket, PacketType) {
     console.log('Game init');
     // initialize to -1, -1
     Game.prototype.head = [-1, -1];
@@ -35,6 +35,8 @@ let Game = function () {
     Game.prototype.state = GameState.First;
     Game.prototype.isMyTurn = false;
     Game.prototype.boardString = "";
+    Game.prototype.sendPacket = sendPacket;
+    Game.prototype.PacketType = PacketType;
 
     // init
     Game.prototype.gameMap = [];
@@ -120,11 +122,12 @@ var Click = function (x, y, isDouble) {
                         this.head = [-1, -1];
                         // TODO: Send Board Packet
                         let boardPacket = {
-                            packetType: PacketType.Board,
+                            packetType: this.PacketType.Board,
                             payload: this.boardString
                         };
                         console.log("boardPacket", boardPacket);
-                        // SendPacket(boardPacket);
+                        console.log("Function", this.sendPacket);
+                        this.sendPacket(boardPacket);
                     }
                 }
                 break;
@@ -418,6 +421,7 @@ Game.prototype.AddOnePlane = AddOnePlane;
 Game.prototype.Click = Click;
 Game.prototype.WinCheck = WinCheck;
 Game.prototype.coordinatePacket = coordinatePacket;
+// Game.prototype.Chat = Chat;
 
 console.log(Game.prototype.isMyTurn);
 console.log(Game.prototype.planeMap);
