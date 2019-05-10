@@ -13,6 +13,38 @@ const PlaneDirection = Object.freeze({
     "left": 3,
 });
 
+var SessionState = Object.freeze({
+  "FirstThingsFirst": 0,
+  "Init": 1, // send check
+  "WaitForInfoResponse": 2, // Match user in database, password not received yet
+  // If user exists, send a response
+  "WaitForPasswordResponse": 3, // Send UserCheck response
+  "UserExists": 4, // Branch #1, receive password and match password in database
+  "PasswordReset": 5, // First login. Receive new password and update database
+  "AlreadyLoggedIn": 6, // Kick off the logged in session
+  "UserSync": 7, // Merge #1, send preference
+  "ClientWaiting": 8,
+  "ClientInvited": 9,
+  "ClientInviting": 10,
+  //"Draw": 11,
+  "InGame": 11,
+
+  "HistorySync": 67, // Send history
+  // Branch #2 and Merge #2, branch according to the media_type
+  // of the next packet (either received or sent).
+  // Send has priority over read.
+  "TextUsername": 69, // Target text username
+  "Text": 60, // Text data
+  "FileUsername": 61, // Target file username
+  "FileName": 62,
+  "FileInProgress": 63, // Until a FileEnd packet is received
+  "GroupUsernameList": 64, // Target group username list
+  "GroupText": 65, // Target group text data
+  // go back to ServerWaiting state
+  // ZZY
+  "GreatWall": 99
+});
+
 var PacketType = Object.freeze({
   "Info": 0x00,
   "InfoResponse": 0x01,
@@ -218,7 +250,17 @@ var Click = function (x, y, isDouble) {
                         payload: ""
                     };
                     this.Chat.sendPacket(gameOverPacket);
-                    console.log("GameOver", gameOverPacket);
+                    // smalltalk
+                    // .confirm('警告', '您输了！再来一局？')
+                    // .then(() => {
+                    //   console.log('another game');
+                    //   this.Chat.sessionState = SessionState.ClientWaiting;
+                    //   this.Chat.globalSelf.opponentName = " ";
+                    // })
+                    // .catch(() => {
+                    //   console.log('exit');
+                    //   this.Chat.killConnection();
+                    // });console.log("GameOver", gameOverPacket);
                 }
             }
             // case GameState.Wait: {
@@ -234,19 +276,21 @@ var Click = function (x, y, isDouble) {
             console.log("ERROR AT Double Click");
             return;
         } else {
-            if (this.head == [-1, -1]) {
+            if (isCoordEqual(this.head, [-1, -1])) {
                 this.head = [x, y];
                 this.gameMap[x][y] = Color.doubleCoordHead;
             } else {
                 this.tail = [x, y];
+                console.log("debug", this.opponentMap);
                 if (this.opponentMap[this.head[0]][this.head[1]] % 10 == Color.planeHead
                     && this.opponentMap[this.tail[0]][this.tail[1]] ==
                     this.opponentMap[this.head[0]][this.head[1]] + 1) {
                     // Need to send Double Coordinate Packet
                     console.log("Double Coordinate Guess Succeed.");
+                    console.log(this.opponentMap);
                     for (let i = 0; i < 10; i++) {
                         for (let j = 0; j < 10; j++) {
-                            if ((this.opponentMap[i][j] / 10) == (this.opponentMap[this.head[0]][this.head[1]] / 10)) {
+                            if (Math.floor(this.opponentMap[i][j] / 10) == Math.floor(this.opponentMap[this.head[0]][this.head[1]] / 10)) {
                                 this.gameMap[i][j] = this.opponentMap[i][j];
                             }
                         }
@@ -261,7 +305,6 @@ var Click = function (x, y, isDouble) {
                     this.gameMap[x][y] = Color.notKnown;
                     this.gameMap[this.head[0]][this.gameMap[1]] = Color.notKnown;
                 }
-                this.state = GameState.Wait;
                 this.isMyTurn = false;
                 if (this.WinCheck() == true) {
                     // TODO

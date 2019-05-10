@@ -1477,6 +1477,8 @@ angular
                   case PacketType.DoubleCoord:
                     // received two coordinates.
                     console.log('get double coord');
+                    globalSelf.Game.prototype.isMyTurn = true;
+                    $rootScope.$apply();
                     break;
                   default:
                     break;
