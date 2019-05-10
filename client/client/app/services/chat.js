@@ -211,8 +211,8 @@ angular
 
           };
 
-          ChatService.prototype.opponentName = 'YYYuna';
-          ChatService.prototype.myName = 'Cyanic';
+          ChatService.prototype.opponentName = '';
+          // ChatService.prototype.myName = globalSelf.user();
           ChatService.prototype.isOurMove = true;
           ChatService.prototype.isDoubleCord = false;
 
