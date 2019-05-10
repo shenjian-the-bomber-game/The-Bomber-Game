@@ -250,17 +250,19 @@ var Click = function (x, y, isDouble) {
                         payload: ""
                     };
                     this.Chat.sendPacket(gameOverPacket);
-                    // smalltalk
-                    // .confirm('警告', '您输了！再来一局？')
-                    // .then(() => {
-                    //   console.log('another game');
-                    //   this.Chat.sessionState = SessionState.ClientWaiting;
-                    //   this.Chat.globalSelf.opponentName = " ";
-                    // })
-                    // .catch(() => {
-                    //   console.log('exit');
-                    //   this.Chat.killConnection();
-                    // });console.log("GameOver", gameOverPacket);
+                    smalltalk
+                        .confirm('恭喜', '您赢了！再来一局？')
+                        .then(() => {
+                        // .then(function() {
+                          console.log('another game');
+                          Game.prototype.initGame();
+                          Game.prototype.Chat.refresh();
+                          console.log('Debug');
+                        })
+                        .catch(() => {
+                            console.log('exit');
+                            Game.prototype.Chat.killConnection();
+                        });
                 }
             }
             // case GameState.Wait: {
@@ -326,10 +328,78 @@ var Click = function (x, y, isDouble) {
                     };
                     this.Chat.sendPacket(gameOverPacket);
                     console.log("GameOver2", gameOverPacket);
+                    smalltalk
+                        .confirm('恭喜', '您赢了！再来一局？')
+                        .then(() => {
+                        // .then(function() {
+                          console.log('another game');
+                          Game.prototype.initGame();
+                          Game.prototype.Chat.refresh();
+                          console.log('Debug');
+                        })
+                        .catch(() => {
+                            console.log('exit');
+                            Game.prototype.Chat.killConnection();
+                        });
+
                 }
             }
         }
     }
+}
+
+var recvCoordinate = function (payload, is_double) {
+    var x1 = Number(payload[0]);
+    var y1 = Number(payload[1]);
+    if(is_double == false) {
+        if(this.planeMap[x1][y1] % 10 != Color.notKnown) {
+            //correct single coordinate guess
+            this.planeMap[x1][y1] = this.planeMap[x1][y1] + 3;
+        }
+        else {
+            this.planeMap[x1][y1] = Color.miss;
+        }
+    }
+    else {
+        var x2 = Number(payload[2]);
+        var y2 = Number(payload[3]);
+        if (this.planeMap[x1][y1] % 10 == Color.planeHead && this.planeMap[x2][y2] == this.planeMap[x1][y1] + 1 ) {
+            // correct double coordinate guess
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 10; j++) {
+                    if (Math.floor(this.planeMap[i][j] / 10) == Math.floor(this.planeMap[x1][y1] / 10)) {
+                        this.planeMap[i][j] = this.planeMap[i][j] + 3;
+                    }
+                }
+            }
+        }
+        else {
+            // this.planeMap[x1][y1] = Color.miss;
+        }
+    }
+}
+
+var initGame = function() {
+    this.gameMap = [];
+    this.planeMap = [];
+    this.opponentMap = [];
+    for (let i = 0; i < 10; i++) {
+        this.gameMap.push(Array.apply(null, {length: 10}).map(function () {
+            return Color.notKnown;
+        }));
+        this.planeMap.push(Array.apply(null, {length: 10}).map(function () {
+            return Color.notKnown;
+        }));
+        this.opponentMap.push(Array.apply(null, {length: 10}).map(function () {
+            return Color.notKnown;
+        }));
+    }
+    this.head = [-1, -1];
+    this.state = GameState.First;
+    this.isMyTurn = false;
+    this.recvBoard = false;
+    this.boardString = "";
+    this.headColor = Color.notKnown;
 }
 
 var AddOnePlane = function (isOpponent, head, tail, planeNumber) {
@@ -585,6 +655,8 @@ Game.prototype.Click = Click;
 Game.prototype.WinCheck = WinCheck;
 Game.prototype.coordinatePacket = coordinatePacket;
 Game.prototype.recvOpponentBoard = recvOpponentBoard;
+Game.prototype.initGame = initGame;
+Game.prototype.recvCoordinate = recvCoordinate;
 // Game.prototype.Chat.socket.on('data', Chat.socketDataCallback);
 // Game.prototype.Chat = Chat;
 

@@ -189,6 +189,13 @@ angular
           };
 
           ChatService.prototype.sessionState = SessionState.FirstThingsFirst;
+          ChatService.prototype.refresh = function() {
+            console.log("refresh");
+            this.sessionState = SessionState.ClientWaiting;
+            this.opponentName = " ";
+            console.log(this.sessionState, " ", this.opponentName);
+            $rootScope.$apply();
+          };
 
           ChatService.prototype.rowLabels = Array.apply(null, { length: 10 }).map(Number.call, Number);
           ChatService.prototype.colLabels = Array.apply(null, { length: 10 }).map(Number.call, Number);
@@ -252,24 +259,39 @@ angular
                 };
               // body
               case 1:
-              case 4:
                 colorHex = '#fdcb6e';
+                return {
+                  "background-color": colorHex,
+                  "border-color":  colorHex
+                };
+              case 4:
+                colorHex = '#FF7E00';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
                 // head
               case 2:
-              case 5:
                 colorHex = '#e17055';
+                return {
+                  "background-color": colorHex,
+                  "border-color":  colorHex
+                };
+              case 5:
+                colorHex = '#841B2D';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
                 // tail
               case 3:
+                colorHex = '#72A0C1';
+                return {
+                  "background-color": colorHex,
+                  "border-color":  colorHex
+                };
               case 6:
-                colorHex = '#fab1a0';
+                colorHex = '#2E5894';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
@@ -830,6 +852,7 @@ angular
           this.auth = data;
           var self = this;
           // send initial packet and reset sessionState
+          console.log("debug")
           let packet = constructPacket({
             packetType: PacketType.Info,
             payload: data.username
@@ -1089,73 +1112,75 @@ angular
 
         ChatService.prototype.changeState = function (rawData, isSend) {
           // @rawData: { packetType: int, payload: Buffer }
-          // @isSend: true for sending packet
-          console.log('changeState, ChatService.prototype.sessionState =', ChatService.prototype.sessionState);
-          if (rawData) {
-            console.log('changeState rawData', rawData);
-            // console.log('changeState, sessionState =', sessionState);
-
-            // these packets will be processed through the whole process.
-            if (rawData.packetType == PacketType.Refuse) {
-              if (rawData.payload.readUInt8(0) == ResponseType.ErrorOccurs) {
-                smalltalk
-                    .alert('警告', '因其他客户端用您的账号登陆，您已下线')
-                    .then(() => {
-                      globalSelf.killConnection();
-                    });
-                return;
-              } else {
+              // @isSend: true for sending packet
+              console.log('changeState, ChatService.prototype.sessionState =', ChatService.prototype.sessionState);
+              if (rawData) {
                 console.log('changeState rawData', rawData);
-                smalltalk.alert('通知', '用您的账号登陆的其他客户端已经下线');
-                return;
-              }
-            }
-            else if (rawData.packetType == PacketType.OnlineUser) {
-              console.log('get new OnlineUser packet');
-              if (globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)) < 0) {
-                globalSelf.onlineUserList.push(globalSelf.decodeUserNamePacket(rawData));
-                $rootScope.$apply();
-                console.log('new online user:', globalSelf.onlineUserList[globalSelf.onlineUserList.length - 1]);
-              } else {
-                console.log('user already exist in the list');
-              }
-              return;
-            }
-            else if (rawData.packetType == PacketType.OfflineUser) {
-              console.log('get new OfflineUser packet');
-              if (globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)) >= 0) {
-                let offline = globalSelf.onlineUserList.splice(globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)), 1);
-                $rootScope.$apply();
-                console.log('offline user:', offline[0]);
-              } else {
-                console.log('user not exist in the list');
-              }
-              return;
-            }
-            // busy
-            else if (rawData.packetType == PacketType.RecvInvit && (ChatService.prototype.sessionState == SessionState.ClientInviting || ChatService.prototype.sessionState == SessionState.InGame || (ChatService.prototype.sessionState == SessionState.ClientInvited && !notResponsingInvitation))) {
-              // Busy gaming
-              console.log('busy gaming');
-              /*
-              const buf = Buffer.allocUnsafe(1);
-              buf.writeUInt8(ResponseType.Busy, 0);
-              let packet = constructPacket({
-                packetType: PacketType.InvitResponse,
-                payload: buf
-              });
-              sendPacket(packet);
-               */
-              return;
-            }
-            else if (rawData.packetType == PacketType.GameOver) {
-              if (ChatService.prototype.sessionState == SessionState.ClientWaiting || ChatService.prototype.sessionState == SessionState.ClientInvited || ChatService.prototype.sessionState == SessionState.ClientInviting || ChatService.prototype.sessionState == SessionState.InGame) {
-                console.log('game over, you lose');
-                smalltalk
-                    .confirm('警告', '您输了！再来一局？')
-                    .then(() => {
-                      console.log('another game');
-                      ChatService.prototype.sessionState = SessionState.ClientWaiting;
+                // console.log('changeState, sessionState =', sessionState);
+
+                // these packets will be processed through the whole process.
+                if (rawData.packetType == PacketType.Refuse) {
+                  if (rawData.payload.readUInt8(0) == ResponseType.ErrorOccurs) {
+                    smalltalk
+                        .alert('警告', '因其他客户端用您的账号登陆，您已下线')
+                        .then(() => {
+                          globalSelf.killConnection();
+                        });
+                    return;
+                  } else {
+                    console.log('changeState rawData', rawData);
+                    smalltalk.alert('通知', '用您的账号登陆的其他客户端已经下线');
+                    return;
+                  }
+                }
+                else if (rawData.packetType == PacketType.OnlineUser) {
+                  console.log('get new OnlineUser packet');
+                  if (globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)) < 0) {
+                    globalSelf.onlineUserList.push(globalSelf.decodeUserNamePacket(rawData));
+                    $rootScope.$apply();
+                    console.log('new online user:', globalSelf.onlineUserList[globalSelf.onlineUserList.length - 1]);
+                  } else {
+                    console.log('user already exist in the list');
+                  }
+                  return;
+                }
+                else if (rawData.packetType == PacketType.OfflineUser) {
+                  console.log('get new OfflineUser packet');
+                  if (globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)) >= 0) {
+                    let offline = globalSelf.onlineUserList.splice(globalSelf.onlineUserList.indexOf(globalSelf.decodeUserNamePacket(rawData)), 1);
+                    $rootScope.$apply();
+                    console.log('offline user:', offline[0]);
+                  } else {
+                    console.log('user not exist in the list');
+                  }
+                  return;
+                }
+                // busy
+                else if (rawData.packetType == PacketType.RecvInvit && (ChatService.prototype.sessionState == SessionState.ClientInviting || ChatService.prototype.sessionState == SessionState.InGame || (ChatService.prototype.sessionState == SessionState.ClientInvited && !notResponsingInvitation))) {
+                  // Busy gaming
+                  console.log(ChatService.prototype.sessionState);
+                  console.log('busy gaming');
+                  /*
+                  const buf = Buffer.allocUnsafe(1);
+                  buf.writeUInt8(ResponseType.Busy, 0);
+                  let packet = constructPacket({
+                    packetType: PacketType.InvitResponse,
+                    payload: buf
+                  });
+                  sendPacket(packet);
+                   */
+                  return;
+                }
+                else if (rawData.packetType == PacketType.GameOver) {
+                  if (ChatService.prototype.sessionState == SessionState.ClientWaiting || ChatService.prototype.sessionState == SessionState.ClientInvited || ChatService.prototype.sessionState == SessionState.ClientInviting || ChatService.prototype.sessionState == SessionState.InGame) {
+                    console.log('game over, you lose');
+                    smalltalk
+                        .confirm('警告', '您输了！再来一局？')
+                        .then(() => {
+                          console.log('another game');
+                          ChatService.prototype.sessionState = SessionState.ClientWaiting;
                       globalSelf.opponentName = " ";
+                      globalSelf.Game.prototype.initGame();
                       $rootScope.$apply();
                     })
                     .catch(() => {
@@ -1472,12 +1497,14 @@ angular
                     // received a single coordinate.
                     console.log('get single coord');
                     globalSelf.Game.prototype.isMyTurn = true;
+                    globalSelf.Game.prototype.recvCoordinate(rawData.payload, false);
                     $rootScope.$apply();
                     break;
                   case PacketType.DoubleCoord:
                     // received two coordinates.
                     console.log('get double coord');
                     globalSelf.Game.prototype.isMyTurn = true;
+                    globalSelf.Game.prototype.recvCoordinate(rawData.payload, true);
                     $rootScope.$apply();
                     break;
                   default:
@@ -1624,7 +1651,7 @@ angular
 
         // game logic
         let chatInstance = new ChatService($Socket.socket, $Settings);
-        console.log('chatInstance', chatInstance)
+        console.log('chatInstance', chatInstance);
         ChatService.prototype.Game = Game(chatInstance);
 
         // Instantiates a new chat service
