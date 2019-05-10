@@ -211,8 +211,8 @@ angular
 
           };
 
-          ChatService.prototype.opponentName = 'Twofyw';
-          ChatService.prototype.myName = 'Novate';
+          ChatService.prototype.opponentName = 'YYYuna';
+          ChatService.prototype.myName = 'Cyanic';
           ChatService.prototype.isOurMove = true;
           ChatService.prototype.isDoubleCord = false;
 
@@ -564,7 +564,7 @@ angular
           if (!self.validOnline()) {
 
             //smalltalk.prompt('登陆', '用户名：', process.env.USER || process.env.username || 'Larry Shen').then(function (value) {
-            smalltalk.prompt('登陆', '用户名：', 'Novate').then(function (value) {
+            smalltalk.prompt('登陆', '用户名：', 'Cyanic').then(function (value) {
               globalUsername = value;
               globalSelf.cache.user = {
                 name: value
