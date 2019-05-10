@@ -51,7 +51,7 @@
                 <div ng-repeat="colLabel in $Chat.colLabels">
                     <div ng-repeat="rowLabel in $Chat.rowLabels">
 <!--                        <button class="badge btn-primary" ng-style="$Chat.mapToColor($Chat.gameMap[rowLabel][colLabel])" ng-click="$Chat.demo(rowLabel, colLabel, $Chat.mapToColor($Chat.gameMap[rowLabel][colLabel]))"> </button>-->
-<!-- {{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} || {{$Chat.Game.prototype.state}} || {{$Chat.sessionState}} -->
+{{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} || {{$Chat.sessionState}} || {{$Chat.Game.prototype.isMyTurn}}
                         <button class="badge btn-primary"
                                 ng-style="$Chat.mapToColor($Chat.Game.prototype.planeMap[rowLabel][colLabel])"
                                 ng-disabled="$Chat.Game.prototype.planeMap[rowLabel][colLabel] % 10 != 9 || $Chat.Game.prototype.state > 3 || $Chat.sessionState != 11"
@@ -74,7 +74,7 @@
                     <button class="badge btn-primary"
                             ng-style="$Chat.mapToColor($Chat.Game.prototype.gameMap[rowLabel][colLabel])"
                             ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
-                            ng-disabled="$Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 9 || !$Chat.Game.prototype.isMyTurn || $Chat.prototype.sessionState != 11"
+                            ng-disabled="$Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 9 || !$Chat.Game.prototype.isMyTurn || $Chat.sessionState != 11"
                     > </button>
                 </div>
             </div>

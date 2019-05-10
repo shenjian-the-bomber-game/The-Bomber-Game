@@ -3,7 +3,7 @@ const GameState = Object.freeze({
     "Second": 2,
     "Third": 3,
     "Move": 4,
-    "Wait": 5,
+    // "Wait": 5,
 });
 
 const PlaneDirection = Object.freeze({
@@ -176,8 +176,10 @@ var Click = function (x, y, isDouble) {
                         console.log("Successfully Add Plane!");
                         if (this.isMyTurn == true) {
                             this.state = GameState.Move;
+                            console.log("I need to make first move");
                         } else {
                             this.state = GameState.Wait;
+                            console.log('I need to wait the other side');
                         }
                         this.boardString += this.head[0].toString() + this.head[1].toString() + this.tail[0].toString() + this.tail[1].toString();
                         this.head = [-1, -1];
@@ -194,8 +196,9 @@ var Click = function (x, y, isDouble) {
                 break;
             }
             case GameState.Move: {
+                console.log("Move x, y:" , x , " ", y);
                 this.gameMap[x][y] = this.opponentMap[x][y];
-                this.state = GameState.Wait;
+                // this.state = GameState.Wait;
                 this.isMyTurn = false;
                 // need to send Single Coordinate Packet
                 let singleCoordinatePacket = {
@@ -204,6 +207,7 @@ var Click = function (x, y, isDouble) {
                 }
                 // SendPacket(singleCoordinatePacket);
                 console.log("SingleCoordinatePacket", singleCoordinatePacket);
+                this.Chat.sendPacket(singleCoordinatePacket);
 
                 if (this.WinCheck() == true) {
                     // TODO
@@ -215,6 +219,12 @@ var Click = function (x, y, isDouble) {
                     console.log("GameOver", gameOverPacket);
                 }
             }
+            // case GameState.Wait: {
+            // console.log("Wait & Move x, y", x, " ", y);
+            // this.gameMap[x][y] = this.opponentMap[x][y];
+            // this.state = GameState.Move;
+            //     this.isMyTurn
+            // }
         }
         ;
     } else {
@@ -428,9 +438,11 @@ var AddOnePlane = function (isOpponent, head, tail, planeNumber) {
 }
 
 var WinCheck = function () {
+    console.log(this.opponentMap);
+    console.log(this.gameMap);
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
-            if (this.opponentMap[i][j] != 0 && this.gameMap[i][j] == 0) return false;
+            if (this.opponentMap[i][j] != Color.notKnown && this.gameMap[i][j] == 0) return false;
         }
     }
 

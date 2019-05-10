@@ -1348,6 +1348,7 @@ angular
                     .then(() => {
                       // invitation accepted
                       console.log('Accepted invitation from ' + inviter);
+                      globalSelf.Game.prototype.isMyTurn = false;
                       globalSelf.opponentName = inviter;
                       const buf = Buffer.allocUnsafe(1);
                       buf.writeUInt8(ResponseType.OK, 0);
@@ -1402,6 +1403,7 @@ angular
                   case ResponseType.OK:
                     smalltalk.alert('通知', '对方同意了您的请求，即将进入游戏').then(
                         function () {
+                          globalSelf.Game.prototype.isMyTurn = true;
                           ChatService.prototype.sessionState = SessionState.InGame;
                           changeState();
                         }
@@ -1440,6 +1442,7 @@ angular
                     break;
                   case PacketType.SingleCoord:
                     // received a single coordinate.
+                    globalSelf.Game.prototype.isMyTurn = true;
                     console.log('get single coord');
                     break;
                   case PacketType.DoubleCoord:
