@@ -13,6 +13,33 @@ const PlaneDirection = Object.freeze({
     "left": 3,
 });
 
+var PacketType = Object.freeze({
+  "Info": 0x00,
+  "InfoResponse": 0x01,
+  "Password": 0x02,
+  "PasswordResponse": 0x03,
+  "Refuse": 0x04,
+  // "Configuration": 0x05,
+  "SyncUserName": 0x06,
+  "OnlineUser": 0x07,
+  "SyncEnd": 0x08,
+  "SendInvit": 0x09,
+  "OfflineUser": 0x10,
+  "RecvInvit": 0x0A,
+  "InvitResponse": 0x0B,
+  "Board": 0x0C,
+  "SingleCoord": 0x0D,
+  "DoubleCoord": 0x0E,
+  "GameOver": 0x0F,
+  "TextUsername": 0x99,
+  "Text": 0x9A,
+  "FileName": 0x9B,
+  "FileInProgress": 0x9C,
+  "GroupTextUserlist": 0x9D,
+  "FileEnd": 0x9E,
+  "FileUsername": 0x9F,
+});
+
 const Color = Object.freeze({
     "miss": 0,
     "planeBody": 1,
@@ -26,8 +53,9 @@ const Color = Object.freeze({
     "notKnown": 9,
 });
 
-let Game = function (sendPacket, PacketType) {
+let Game = function (Chat) {
     console.log('Game init');
+    console.log(Chat);
     // initialize to -1, -1
     Game.prototype.head = [-1, -1];
     Game.prototype.tail = [];
@@ -35,8 +63,8 @@ let Game = function (sendPacket, PacketType) {
     Game.prototype.state = GameState.First;
     Game.prototype.isMyTurn = false;
     Game.prototype.boardString = "";
-    Game.prototype.sendPacket = sendPacket;
-    Game.prototype.PacketType = PacketType;
+    Game.prototype.Chat = Chat;
+    // Game.prototype.PacketType = PacketType;
 
     // init
     Game.prototype.gameMap = [];
@@ -59,6 +87,8 @@ let Game = function (sendPacket, PacketType) {
         [0, 0, 1, 0, 0],
         [0, 1, 3, 1, 0]
     ];
+
+    return Game;
 }
 
 // When click on a box, a coordinate will be generated
@@ -122,12 +152,12 @@ var Click = function (x, y, isDouble) {
                         this.head = [-1, -1];
                         // TODO: Send Board Packet
                         let boardPacket = {
-                            packetType: this.PacketType.Board,
+                            packetType: PacketType.Board,
                             payload: this.boardString
                         };
                         console.log("boardPacket", boardPacket);
-                        console.log("Function", this.sendPacket);
-                        this.sendPacket(boardPacket);
+                        console.log("Function", this.Chat.sendPacket);
+                        this.Chat.sendPacket(boardPacket);
                     }
                 }
                 break;
@@ -446,7 +476,7 @@ Game.prototype.coordinatePacket = coordinatePacket;
 Game.prototype.recvOpponentBoard = recvOpponentBoard;
 // Game.prototype.Chat = Chat;
 
-console.log(Game.prototype.isMyTurn);
-console.log(Game.prototype.planeMap);
+// console.log(Game.prototype.isMyTurn);
+// console.log(Game.prototype.planeMap);
 
 module.exports = Game;
