@@ -1,5 +1,5 @@
-drop database if exists db1652297;
-create database db1652297;
+-- drop database if exists db1652297;
+-- create database db1652297;
 
 use db1652297;
 drop table if exists account;
