@@ -248,63 +248,63 @@ angular
             // return 1;
             // let planeNumber = Math.floor(planeCode / 10);
             let location = planeCode % 10;
-            let colorHex = '#b2bec3';
+            let colorHex = '#E0EEE0';
             switch (location) {
               // miss hit
               case 0:
-                colorHex = '#000000';
+                colorHex = '#F5DEB3';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
               // body
               case 1:
-                colorHex = '#fdcb6e';
+                colorHex = '#7A8B8B';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
               case 4:
-                colorHex = '#FF7E00';
+                colorHex = '#008B8B';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
                 // head
               case 2:
-                colorHex = '#e17055';
+                colorHex = '#EE4000';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
               case 5:
-                colorHex = '#841B2D';
+                colorHex = '#8B0000';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
                 // tail
               case 3:
-                colorHex = '#72A0C1';
+                colorHex = '#CD96CD';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
               case 6:
-                colorHex = '#2E5894';
+                colorHex = '#8B008B';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
                 //  double cord
               case 7:
-                colorHex = '#d63031';
+                colorHex = '#EE6A50';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
                 };
               case 8:
-                colorHex = '#d63031';
+                colorHex = '#EE6A50';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
