@@ -103,7 +103,7 @@ void TransferLayer::select_loop(int listener) {
                         }
                     }
                     
-                    cout << "send buffer transport " << el.send_buffer.size() << endl;
+                    // cout << "send buffer transport " << el.send_buffer.size() << endl;
                     if (FD_ISSET(el.socket_fd, &write_fds) && try_send(el) != StatusCode::OK) {
                         // remove client
                         PreLayerInstance.pack_ErrorOccurs(&el);
