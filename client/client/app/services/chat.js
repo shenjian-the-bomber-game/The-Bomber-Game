@@ -236,7 +236,7 @@ angular
             this.isDoubleCord = !this.isDoubleCord;
           }
           ChatService.prototype.doubleCordBtnModel = function (isDoubleCord) {
-            let messege = isDoubleCord ? '使用双坐标' : '使用单坐标';
+            let messege = isDoubleCord ? '双' : '单';
             return messege;
           }
           ChatService.prototype.onlineBadgeModel = function (isDoubleCord) {
@@ -259,7 +259,7 @@ angular
                 };
               // body
               case 1:
-                colorHex = '#7A8B8B';
+                colorHex = '#CDC9C9';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex
@@ -285,7 +285,7 @@ angular
                 };
                 // tail
               case 3:
-                colorHex = '#CD96CD';
+                colorHex = '#8B7D7B';
                 return {
                   "background-color": colorHex,
                   "border-color":  colorHex

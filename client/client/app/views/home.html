@@ -34,11 +34,12 @@
                  <div ng-repeat="rowLabel in $Chat.rowLabels">
                      <!--                        <button class="badge btn-primary" ng-style="$Chat.mapToColor($Chat.gameMap[rowLabel][colLabel])" ng-click="$Chat.demo(rowLabel, colLabel, $Chat.mapToColor($Chat.gameMap[rowLabel][colLabel]))"> </button>-->
                      <!-- {{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} || {{$Chat.Game.prototype.state}} || {{$Chat.sessionState}} -->
-                     <button class="badge btn-primary"
+                     <!-- <button class="badge btn-primary" -->
+                         <button class="btn-primary btn-circle"
                              ng-style="$Chat.mapToColor($Chat.Game.prototype.planeMap[rowLabel][colLabel])"
                              ng-disabled="$Chat.Game.prototype.planeMap[rowLabel][colLabel] % 10 != 9 || $Chat.Game.prototype.state > 3 || $Chat.sessionState != 11"
                              ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
-                     > {{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} </button>
+                     > </button>
                  </div>
              </div>
          </div>
@@ -54,12 +55,13 @@
         <div class="their-board btn-group btn-matrix ml-5 mb-5 border">
             <div ng-repeat="colLabel in $Chat.colLabels">
                 <div ng-repeat="rowLabel in $Chat.rowLabels">
-                    <button class="badge btn-primary"
+                    <!-- <button class="badge btn-primary" -->
+                        <button class="btn-primary btn-circle"
                             ng-style="$Chat.mapToColor($Chat.Game.prototype.gameMap[rowLabel][colLabel])"
                             ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
                             ng-disabled="($Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 9 && $Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 2 && $Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 3)
                                             || !$Chat.Game.prototype.isMyTurn || $Chat.sessionState != 11 || !$Chat.Game.prototype.recvBoard || ($Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 == 2 && $Chat.isDoubleCord == false) || ($Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 == 3 && $Chat.isDoubleCord == false)"
-                    > {{$Chat.Game.prototype.gameMap[rowLabel][colLabel]}}</button>
+                    > </button>
                 </div>
             </div>
         </div>
