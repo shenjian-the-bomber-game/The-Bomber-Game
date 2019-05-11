@@ -407,6 +407,7 @@ angular
           function tryReconnect() {
             console.log('socketClose', globalSocket);
             console.log('Trying to reconnect...');
+            ChatService.prototype.sessionState = SessionState.Init;
             globalSelf.connect();
             // if (!globalSelf.connected()) {
             //setTimeout(tryReconnect, 1000);
