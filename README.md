@@ -1,20 +1,9 @@
 # The-Bomber-Game
 ShenJian Network Group Work: The Bomber Game.
-
-
-
-----------
-
-5.3
-
-- No error detection and handling for incorrect frame type.
-
-
-
---------
-
-5.6
-
-- Announcing double coordinates to recognize a plane needs an extra button in client user interface.  
-- Single coordinate frame will be automatically send after a click.
-
+---------------
+Install Guide
+1. cd The-Bomber-Game
+2. ./server run the server
+3. cd client
+4. npm install
+5. npm run start
