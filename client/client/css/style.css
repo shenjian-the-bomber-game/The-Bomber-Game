@@ -365,7 +365,7 @@ body {
     text-align: center;
     /*     top: 0%; */
     height: 80%;
-    transform: translateY(20%);
+    transform: translateY(5%);
 }
 
 .boards > .our-board {
@@ -384,10 +384,10 @@ body {
 }
 
 .btn-ugly-circle {
-    width: 130px;
-    height: 130px;
+    width: 100px;
+    height: 100px;
     padding: 6px 0px;
-    border-radius: 65px;
+    border-radius: 50px;
     text-align: center;
     font-size: 48px;
     line-height: 1.42857;

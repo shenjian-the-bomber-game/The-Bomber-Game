@@ -29,7 +29,7 @@
     <br>
     <div class="boards">
 <!--         <div class="oppo-background">-->
-         <div class="our-board btn-group btn-matrix mr-5 mb-5 border">
+         <div class="our-board btn-group btn-matrix mr-5 mb-3 border">
              <div ng-repeat="colLabel in $Chat.colLabels">
                  <div ng-repeat="rowLabel in $Chat.rowLabels">
                      <!--                        <button class="badge btn-primary" ng-style="$Chat.mapToColor($Chat.gameMap[rowLabel][colLabel])" ng-click="$Chat.demo(rowLabel, colLabel, $Chat.mapToColor($Chat.gameMap[rowLabel][colLabel]))"> </button>-->
@@ -52,7 +52,7 @@
             <hr>
         </div> -->
 
-        <div class="their-board btn-group btn-matrix ml-5 mb-5 border">
+        <div class="their-board btn-group btn-matrix ml-5 mb-3 border">
             <div ng-repeat="colLabel in $Chat.colLabels">
                 <div ng-repeat="rowLabel in $Chat.rowLabels">
                     <!-- <button class="badge btn-primary" -->
@@ -71,20 +71,21 @@
 <!--        <br>-->
 <!--        <br>-->
 <!--        {{$Chat.onlineUserList}}-->
+<br>
+        <span ng-bind="$Chat.Game.prototype.isMyTurn ? '请下棋' : '请等待'"
+              ng-class="'badge badge-pill ' + ($Chat.Game.prototype.isMyTurn ? 'badge-success' : 'badge-danger')"></span><br>
+        <button ng-style="$Chat.doubleCordBtnStyle($Chat.isDoubleCord)"
+                ng-click="$Chat.doubleCordBtnClick()"
+                class="btn-ugly-circle text-center mt-3">{{$Chat.doubleCordBtnModel($Chat.isDoubleCord)}}</button>
         <ul class="text-left">
             <li class="mt-2" ng-repeat="user in $Chat.onlineUserList">
-                <img width="50" height="50" src="placeholder.png">
-                <br>
+                <img width="40" height="40" src="placeholder.png">
+                <!-- <br> -->
                 <div class="info">
                     <div style ="float: left; width: 200px;" href="#" class="user" ng-bind="user" ng-click="$Chat.sendRequest(user)">{{user}}</div>
                 </div>
             </li>
         </ul>
-        <span ng-bind="$Chat.Game.prototype.isMyTurn ? '请下棋' : '请等待'"
-              ng-class="'badge badge-pill ' + ($Chat.Game.prototype.isMyTurn ? 'badge-success' : 'badge-danger')"></span><br>
-        <button ng-style="$Chat.doubleCordBtnStyle($Chat.isDoubleCord)"
-                ng-click="$Chat.doubleCordBtnClick()"
-                class="btn-ugly-circle text-center mt-5">{{$Chat.doubleCordBtnModel($Chat.isDoubleCord)}}</button>
     </div>
 <!--    <footer class="footer text-center left-menu">-->
 <!--        <menu class="list-friends pt-3">-->
