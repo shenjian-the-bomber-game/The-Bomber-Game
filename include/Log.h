@@ -19,6 +19,7 @@ namespace fly
 
 enum Level
 {
+    Doc,
     Error,
     Info,
     Debug,

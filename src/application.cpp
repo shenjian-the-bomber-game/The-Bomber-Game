@@ -74,6 +74,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         respond_->respond_ = ResponseType::OK;
                                         client_name_->host_username_ = message_->user_name_;
                                         LOG(Info) << "Check User Exists" << std::endl;
+                                        LOG(Doc) << message_->user_name_ << " username certification succeed." << std::endl;
                                         PreLayerInstance.pack_Message(client_name_);
                                         client_name_->state = SessionState::WaitForPasswd;
                                        break;
@@ -83,6 +84,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         respond_->type_ = PacketType::InfoResponse;
                                         respond_->respond_ = ResponseType::UserNotExist;
                                         LOG(Error) << "User not Exists" << std::endl;
+                                        LOG(Doc) << message_->user_name_ << " username certification fail." << std::endl;
                                         PreLayerInstance.pack_Message(client_name_);
                                         break;
                                }
@@ -113,6 +115,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                 respond_->type_ = PacketType::Refuse;
                                                 respond_->respond_ = ResponseType::AlreadyLoggedIn;
                                                 PreLayerInstance.pack_Message(client_name_);
+                                                LOG(Doc) << client_name_->host_username_ << " already logged in and kick out." << endl;
                                         }
                                         respond_->type_ = PacketType::PasswordResponse;
                                         respond_->respond_ = ResponseType::OK;
@@ -123,6 +126,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         respond_->onlineuser_ = TransLayerInstance.find_all_user(client_name_);
                                         // respond_->config_ = DatabaseConnection::get_instance()->retrive_history_count(client_name_->host_username_);
                                         PreLayerInstance.pack_Message(client_name_);
+                                        LOG(Doc) << client_name_->host_username_ << " logged in." << endl;
                                         
                                         // Find all client & broadcast new online user to others
                                         std::vector<Client*> client_list_;
@@ -138,6 +142,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                 case false: {
                                         // password error
                                         LOG(Info) << "Recv Wrong Password" << endl;
+                                        LOG(Doc) << client_name_->host_username_ << " send wrong password." << endl;
                                         respond_->type_ = PacketType::PasswordResponse;
                                         respond_->respond_ = ResponseType::WrongPassword;
                                         PreLayerInstance.pack_Message(client_name_);
@@ -197,9 +202,10 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                        client_name_->state = SessionState::WaitForBoard;
                                                        Client_A->game_info_.opponent_ = client_name_;
                                                        client_name_->game_info_.opponent_ = Client_A;
+                                                       LOG(Doc) << Client_A->host_username_ << "recv invitaion response OK from " << Client_A->game_info_.opponent_->host_username_ << endl;
                                                 }
                                                 else {
-                                                        LOG(Error) << "Can't Find Client A after B responsed." << endl;
+                                                        LOG(Doc) << "Can't Find Client A after B responsed." << endl;
                                                 }
                                         }
                                         else if(message_->respond_ == ResponseType::RefuseInvit) {
@@ -210,9 +216,10 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                        PreLayerInstance.pack_Message(Client_A); 
                                                        client_name_->state = SessionState::ServerWaiting;
                                                        Client_A->state = SessionState::ServerWaiting;
+                                                       LOG(Doc) << Client_A->host_username_ << "recv invitaion response Refuse from " << Client_A->game_info_.opponent_->host_username_ << endl;
                                                 }
                                                 else {
-                                                        LOG(Error) << "Can't Find Client A after B responsed." << endl;
+                                                        LOG(Doc) << "Can't Find Client A after B responsed." << endl;
                                                 }
                                         }
                                         break;
@@ -231,6 +238,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                         respond_->type_ = PacketType::InvitResponse;
                                                         respond_->respond_ = ResponseType::Busy;
                                                         PreLayerInstance.pack_Message(client_name_);
+                                                        LOG(Doc) << Client_B->host_username_ << " busy" << endl;
                                                 }
                                                 else {
                                                         Client_B->message_atop.user_name_a_ = client_name_->host_username_;
@@ -238,6 +246,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                         PreLayerInstance.pack_Message(Client_B);
                                                         client_name_->state = SessionState::WaitInvitResponse;
                                                         Client_B->state = SessionState::Responding;
+                                                        LOG(Doc) << Client_B->host_username_ << " receive invitation" << endl;
                                                 }
                                         }
                                         else {
@@ -303,6 +312,15 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                                 // send other's board
                                                 client_name_->game_info_.opponent_->message_atop.type_ = PacketType::Board;
                                                 PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
+                                                LOG(Doc) << "***********************GAME START**********************" << endl;
+                                                LOG(Doc) << client_name_->host_username_ << " board information" << endl;
+                                                for(int i = 0; i < 12; i++) {
+                                                        LOG(Doc) << client_name_->game_info_.plane_coord_[i] << " ";
+                                                }
+                                                LOG(Doc) << endl << client_name_->game_info_.opponent_->host_username_ << " board information" << endl;
+                                                for(int i = 0; i < 12; i++) {
+                                                        LOG(Doc) << client_name_->game_info_.opponent_->game_info_.plane_coord_[i] << " ";
+                                                }
                                         }
                                         break;
                                }
@@ -320,6 +338,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         client_name_->game_info_.opponent_->message_atop.y = message_->y;
                                         client_name_->game_info_.opponent_->message_atop.type_ = PacketType::SingleCoord;
                                         PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
+                                        LOG(Doc) << client_name_->host_username_ << " receive single coordiante" << message_->x << " " << message_->y << endl;
                                         break;
                                 }
                                 case PacketType::DoubleCoord: {
@@ -333,6 +352,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         client_name_->game_info_.opponent_->message_atop.tail_y = message_->tail_y;
                                         client_name_->game_info_.opponent_->message_atop.type_ = PacketType::DoubleCoord;
                                         PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
+                                        LOG(Doc) << client_name_->host_username_ << " receive double coordiante" << message_->head_x << " " << message_->head_y << " " << message_->tail_x << " " << message_->tail_y << endl;
                                         break;
                                 }
                                 case PacketType::GameOver: {
@@ -342,6 +362,7 @@ void ApplicationLayer::MessageToApp(Client *client_name_)
                                         client_name_->game_info_.opponent_->message_atop.type_ = PacketType::GameOver;
                                         PreLayerInstance.pack_Message(client_name_->game_info_.opponent_);
                                         client_name_->game_info_.opponent_->state = SessionState::ServerWaiting;
+                                        LOG(Doc) << "**************************************GAME OVER*******************************" << endl;
                                         break;
                                 }
                         }

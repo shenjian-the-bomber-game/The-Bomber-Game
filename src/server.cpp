@@ -23,7 +23,7 @@ int main()
 {
         // init log
         Log::get().setLogStream(cout);
-        Log::get().setLevel(Debug);
+        Log::get().setLevel(Doc);
 
         int listener = TransLayerInstance.get_listener(20350);
         TransLayerInstance.select_loop(listener);
