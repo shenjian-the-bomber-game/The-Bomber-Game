@@ -15,13 +15,13 @@ body {
 body {
     overflow: hidden;
     font-family: 'Open Sans', sans-serif;
-    background-image: -webkit-linear-gradient(top right, rgba(255, 255, 255, 0.6), transparent 60%, rgba(0, 0, 0, 0.6)), -webkit-linear-gradient(bottom right, #a0d3e4, #97d1e7);
-    background-image: linear-gradient(to bottom left, rgba(255, 255, 255, 0.6), transparent 60%, rgba(0, 0, 0, 0.6)), linear-gradient(to top left, #a0d3e4, #97d1e7);
+    /*background-image: -webkit-linear-gradient(top right, rgba(255, 255, 255, 0.6), transparent 60%, rgba(0, 0, 0, 0.6)), -webkit-linear-gradient(bottom right, #a0d3e4, #97d1e7);*/
+    /*background-image: linear-gradient(to bottom left, rgba(255, 255, 255, 0.6), transparent 60%, rgba(0, 0, 0, 0.6)), linear-gradient(to top left, #a0d3e4, #97d1e7);*/
 }
 
 .ui {
     height: 100%;
-    background-color: #fff;
+    background-color: black;
     border-radius: 3px;
     box-shadow: 0 0 25px #3a9fc4;
     -webkit-box-orient: horizontal;
@@ -65,17 +65,17 @@ body {
 }
 
 .ui .left-menu {
-    width: 29%;
-    box-sizing: content-box;
-    padding: 20px 4px 4px;
-    height: 100%;
-    background: #434753;
+    /* width: 29%; */
+    /* box-sizing: content-box; */
+    /* padding: 20px 4px 4px; */
+    height: 20%;
+    /*background: #434753;*/
 }
 
 .ui .chat {
-    width: 70%;
+    width: 100%;
     height: 100%;
-    background: #f1f5f8;
+    background: #ffffff;
 }
 
 .ui .chat .info {
@@ -110,13 +110,13 @@ body {
 .ui .avatar > img,
 .ui .list-friends img {
     border-radius: 50%;
-    border: 3px solid #696c75;
+    /*border: 3px solid #696c75;*/
 }
 
 .ui .list-friends {
     list-style: none;
     font-size: 13px;
-    height: 88%;
+    height: 20%;
 }
 
 .ui .list-friends img {
@@ -348,8 +348,8 @@ body {
 
 /* The heart of the matter */
 .btn-matrix button {
-    width: 24px;
-    height: 24px;
+    width: 34px;
+    height: 34px;
     padding: 4px;
 }
 
@@ -363,8 +363,9 @@ body {
 
 .boards {
     text-align: center;
-    top: 0%;
-    transform: translateY(5%);
+    /*     top: 0%; */
+    height: 80%;
+    transform: translateY(20%);
 }
 
 .boards > .our-board {
@@ -372,3 +373,22 @@ body {
     transform: translateY(0%);
 }
 
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+
+.btn-ugly-circle {
+    width: 130px;
+    height: 130px;
+    padding: 6px 0px;
+    border-radius: 65px;
+    text-align: center;
+    font-size: 48px;
+    line-height: 1.42857;
+}

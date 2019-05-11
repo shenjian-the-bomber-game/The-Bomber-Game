@@ -1,4 +1,4 @@
-<div class="left-menu">
+<!-- <div class="left-menu"> -->
     <!--  <form action="#" class="search" ng-init="name = ''">-->
     <!--    <input placeholder="Search by name..." type="search" name="" id="" ng-model="name">-->
     <!--    <input type="submit" value="&#xf002;">-->
@@ -12,64 +12,46 @@
     <!--    <div class="xp-cellContainer">-->
     <!--  </div>-->
     <!-- ng-init="isMe = (user.id === $Chat.user().id)"-->
-    <menu class="list-friends pt-3">
-        <li ng-repeat="user in $Chat.onlineUserList">
-            <!--      <img width="50" height="50" ng-src="{{ user.image }}">-->
-            <div class="info">
-                <div class="user" ng-bind="user">{{user}}</div>
-                <div class="status on" ng-cloak>
-                    <!--          {{ $Chat.isTyping(user) ? 'typing...' : 'online' }}-->
-                    <a class="status inactive" href="javascript:void(0);" ng-click="$Chat.sendRequest(user)">Send request...</a>
-                </div>
-            </div>
-        </li>
-    </menu>
-    <footer class="footer text-center">
-<!--        login status-->
-        <span ng-bind="$Chat.validOnline() ? '已登录' : '未登录'"
-              ng-class="'badge badge-pill ' + ($Chat.validOnline() ? 'badge-primary' : 'badge-dark')"> </span>
-<!--        connection status-->
-        <span ng-bind="$Chat.connected() ? '已连接' : '未连接'"
-              ng-class="'badge badge-pill ' + ($Chat.connected() ? 'badge-primary' : 'badge-dark')"></span><br>
-<!--        is my turn-->
-        <span ng-bind="$Chat.Game.prototype.isMyTurn ? '本方下棋中' : '对方下棋中'"
-              ng-class="'badge badge-pill ' + ($Chat.Game.prototype.isMyTurn ? 'badge-success' : 'badge-danger')"></span><br>
-        <button ng-style="$Chat.doubleCordBtnStyle($Chat.isDoubleCord)"
-                ng-click="$Chat.doubleCordBtnClick()"
-                class="btn btn-primary pt-3">{{$Chat.doubleCordBtnModel($Chat.isDoubleCord)}}</button>
-    </footer>
-</div>
+<!-- </div> -->
 <!--class="row" --><!--class="col-md" -->
 <div class="chat text-center">
-    <span>{{$Chat.hasValidUser}}</span>
+    <!--        login status-->
+    <div class="text-right">
+        <div class="btn-group text-center pr-3 mt-3">
+        <span ng-bind="$Chat.validOnline() ? '已登录' : '未登录'"
+              ng-class="'pt-1 badge badge-pill ' + ($Chat.validOnline() ? 'badge-success' : '')"> </span>
+            <!--        connection status-->
+            <span ng-bind="$Chat.connected() ? '已连接' : '未连接'"
+                  ng-class="'pt-1 badge badge-pill ' + ($Chat.connected() ? 'badge-success' : '')"></span><br>
+            <!--        is my turn-->
+        </div>
+    </div>
+    <br>
     <div class="boards">
-        <div class="oppo-background">
-            <div class="align-right text-left">
-                <h5>Opponent progress<br><span class="badge badge-secondary">{{$Chat.opponentName}}</span></h5>
-            </div>
-            <div class="our-board btn-group btn-matrix">
-                <div ng-repeat="colLabel in $Chat.colLabels">
-                    <div ng-repeat="rowLabel in $Chat.rowLabels">
-<!--                        <button class="badge btn-primary" ng-style="$Chat.mapToColor($Chat.gameMap[rowLabel][colLabel])" ng-click="$Chat.demo(rowLabel, colLabel, $Chat.mapToColor($Chat.gameMap[rowLabel][colLabel]))"> </button>-->
-{{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} || {{$Chat.isDoubleCord}} || {{($Chat.Game.prototype.gameMap[rowLabel][colLabel])}}
-                        <button class="badge btn-primary"
-                                ng-style="$Chat.mapToColor($Chat.Game.prototype.planeMap[rowLabel][colLabel])"
-                                ng-disabled="$Chat.Game.prototype.planeMap[rowLabel][colLabel] % 10 != 9 || $Chat.Game.prototype.state > 3 || $Chat.sessionState != 11"
-                                ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
-                            > {{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--         <div class="oppo-background">-->
+         <div class="our-board btn-group btn-matrix mr-5 mb-5 border">
+             <div ng-repeat="colLabel in $Chat.colLabels">
+                 <div ng-repeat="rowLabel in $Chat.rowLabels">
+                     <!--                        <button class="badge btn-primary" ng-style="$Chat.mapToColor($Chat.gameMap[rowLabel][colLabel])" ng-click="$Chat.demo(rowLabel, colLabel, $Chat.mapToColor($Chat.gameMap[rowLabel][colLabel]))"> </button>-->
+                     <!-- {{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} || {{$Chat.Game.prototype.state}} || {{$Chat.sessionState}} -->
+                     <button class="badge btn-primary"
+                             ng-style="$Chat.mapToColor($Chat.Game.prototype.planeMap[rowLabel][colLabel])"
+                             ng-disabled="$Chat.Game.prototype.planeMap[rowLabel][colLabel] % 10 != 9 || $Chat.Game.prototype.state > 3 || $Chat.sessionState != 11"
+                             ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
+                     > {{$Chat.Game.prototype.planeMap[rowLabel][colLabel]}} </button>
+                 </div>
+             </div>
+         </div>
+<!--        <div class="text-left">-->
+<!--            <h5>Opponent progress<br><span class="badge badge-secondary">{{$Chat.opponentName}}</span></h5>-->
+<!--        </div>-->
+<!--         </div>-->
 
-        <div class="form-group col-12">
+        <!-- <div class="form-group col-12">
             <hr>
-        </div>
+        </div> -->
 
-        <div class="align-right text-left">
-            <h5>Guess now!<br><span class="badge badge-secondary">{{$Chat.user()}}</span></h5>
-        </div>
-        <div class="their-board btn-group btn-matrix">
+        <div class="their-board btn-group btn-matrix ml-5 mb-5 border">
             <div ng-repeat="colLabel in $Chat.colLabels">
                 <div ng-repeat="rowLabel in $Chat.rowLabels">
                     <button class="badge btn-primary"
@@ -78,17 +60,36 @@
                             ng-disabled="($Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 9 && $Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 2 && $Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 != 3)
                                             || !$Chat.Game.prototype.isMyTurn || $Chat.sessionState != 11 || !$Chat.Game.prototype.recvBoard || ($Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 == 2 && $Chat.isDoubleCord == false) || ($Chat.Game.prototype.gameMap[rowLabel][colLabel] % 10 == 3 && $Chat.isDoubleCord == false)"
                     > {{$Chat.Game.prototype.gameMap[rowLabel][colLabel]}}</button>
-                    <!-- > </button> -->
-                    <!-- // debug -->
-                    <!-- <button class="badge btn-primary"
-                            ng-style="$Chat.mapToColor($Chat.gameMap[rowLabel][colLabel])"
-                            ng-click="$Chat.Game.prototype.Click(rowLabel, colLabel, $Chat.isDoubleCord)"
-                    > {{$Chat.gameMap[rowLabel][colLabel]}}</button> -->
                 </div>
             </div>
         </div>
+<!--        <div class="text-left">-->
+<!--            <h5>Guess now!<br><span class="badge badge-secondary">{{$Chat.user()}}</span></h5>-->
+<!--        </div><br>-->
 <!--        <br>-->
-    </divo
+<!--        <br>-->
+<!--        {{$Chat.onlineUserList}}-->
+        <ul class="text-left">
+            <li class="mt-2" ng-repeat="user in $Chat.onlineUserList">
+                <img width="50" height="50" src="placeholder.png">
+                <br>
+                <div class="info">
+                    <div style ="float: left; width: 200px;" href="#" class="user" ng-bind="user" ng-click="$Chat.sendRequest(user)">{{user}}</div>
+                </div>
+            </li>
+        </ul>
+        <span ng-bind="$Chat.Game.prototype.isMyTurn ? '请下棋' : '请等待'"
+              ng-class="'badge badge-pill ' + ($Chat.Game.prototype.isMyTurn ? 'badge-success' : 'badge-danger')"></span><br>
+        <button ng-style="$Chat.doubleCordBtnStyle($Chat.isDoubleCord)"
+                ng-click="$Chat.doubleCordBtnClick()"
+                class="btn-ugly-circle text-center mt-5">{{$Chat.doubleCordBtnModel($Chat.isDoubleCord)}}</button>
+    </div>
+<!--    <footer class="footer text-center left-menu">-->
+<!--        <menu class="list-friends pt-3">-->
+
+
+<!--        </menu>-->
+<!--    </footer>-->
 
     <!--  <div class="top">-->
     <!--    <div class="avatar" style="float: right; padding-right: 12px">-->
